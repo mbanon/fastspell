@@ -25,6 +25,7 @@ Logging:
   -v, --version      show version of this script and exit
 ```
 
+
 ## How it works 
 
 FastSpell will try to determine the language of each sentence in the input by using **[FastText](https://fasttext.cc/)**.
@@ -40,3 +41,69 @@ The **Aggressive** version is less hesitant to tag a sentence with the target la
 ## Benchmark 
 
 ![comparative.png](comparative.png)
+
+
+## Usage example
+
+Input text:
+```
+19-01-2011 47 comentarios 7o Xornadas de Xardinería de Galicia (RE)PLANTEAR
+• Proceso de valoración de idoneidade: entrevistas psicosociais e visita domiciliaria e aplicación de test psicolóxicos, se é o caso.
+- Chrome e Firefox en MacOS non son compatibles (unicamente Safari é compatible con MacOS), pero invocarase PSAL ao intentar empregar Chrome ou Firefox.
+Mago da luz / Maga da luz
+Celebrada a homenaxe a Xosé Manuel Seivane Rivas
+A instalación eléctrica en teletraballo
+Saltar á navegación Navegación INICIO
+Julio Freire, competidor da FGA, invitado polo Kennel club de Inglaterra, para participar nos Crufts 2014 (Birmingham, 6 - 9 de marzo).
+25 de xullo - Truong Tan Sang toma posesión como presidente de Vietnam
+Quen pode solicitar o dito financiamento?
+```
+Command:
+```
+cat inputtext | python3.7 fastspell.py $L --aggr
+cat inputtext | python3.7 fastspell.py $L --cons
+```
+Aggressive output:
+```
+19-01-2011 47 comentarios 7o Xornadas de Xardinería de Galicia (RE)PLANTEAR     gl
+• Proceso de valoración de idoneidade: entrevistas psicosociais e visita domiciliaria e aplicación de test psicolóxicos, se é o caso.   gl
+- Chrome e Firefox en MacOS non son compatibles (unicamente Safari é compatible con MacOS), pero invocarase PSAL ao intentar empregar Chrome ou Firefox.        gl
+Mago da luz / Maga da luz       gl
+Celebrada a homenaxe a Xosé Manuel Seivane Rivas        gl
+A instalación eléctrica en teletraballo gl
+Saltar á navegación Navegación INICIO   gl
+Julio Freire, competidor da FGA, invitado polo Kennel club de Inglaterra, para participar nos Crufts 2014 (Birmingham, 6 - 9 de marzo). es
+25 de xullo - Truong Tan Sang toma posesión como presidente de Vietnam  gl
+Quen pode solicitar o dito financiamento?       gl
+```
+
+Conservative output:
+```
+19-01-2011 47 comentarios 7o Xornadas de Xardinería de Galicia (RE)PLANTEAR     unk
+• Proceso de valoración de idoneidade: entrevistas psicosociais e visita domiciliaria e aplicación de test psicolóxicos, se é o caso.   gl
+- Chrome e Firefox en MacOS non son compatibles (unicamente Safari é compatible con MacOS), pero invocarase PSAL ao intentar empregar Chrome ou Firefox.        gl
+Mago da luz / Maga da luz       unk
+Celebrada a homenaxe a Xosé Manuel Seivane Rivas        gl
+A instalación eléctrica en teletraballo unk
+Saltar á navegación Navegación INICIO   gl
+Julio Freire, competidor da FGA, invitado polo Kennel club de Inglaterra, para participar nos Crufts 2014 (Birmingham, 6 - 9 de marzo). es
+25 de xullo - Truong Tan Sang toma posesión como presidente de Vietnam  gl
+Quen pode solicitar o dito financiamento?       gl
+```
+Getting stats:
+```
+cat inputtext | python3.7 fastspell.py $L --aggr | cut -f2 | sort | uniq -c | sort -nr
+cat inputtext | python3.7 fastspell.py $L --cons | cut -f2 | sort | uniq -c | sort -nr
+```
+Aggressive:
+```
+9 gl
+1 es
+```
+Conservative:
+```
+6 gl
+3 unk
+1 es
+```
+
