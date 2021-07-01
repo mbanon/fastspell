@@ -227,5 +227,5 @@ for line in sys.stdin:
 end_time = timeit.default_timer()
         
 
-print("Elapsed time: {}".format(end_time - start_time))
+logging.info("Elapsed time: {}".format(end_time - start_time))
     
