@@ -1,3 +1,4 @@
 fasttext
 hunspell
 sacremoses
+urllib3
