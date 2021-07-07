@@ -42,23 +42,11 @@ class FastSpell:
     }
 
 
-    #TO DO: Change to anything more maintainable
-    tokenizers = {
-    "ca": MosesTokenizer("ca"),
+    #Special tokenizers. If the lang is not in this list, MosesTokenizer(lang) will be used
+    #(failing back to "en" if langnot exists)
+    special_tokenizers = {
     "gl": MosesTokenizer("es"), #TO DO
-    "nb": MosesTokenizer("nb"),
-    "nn": MosesTokenizer("nb"), #TO DO
-    "da": MosesTokenizer("da"),
-    "bs": MosesTokenizer("en"), #TO DO
-    "cs": MosesTokenizer("cs"),
-    "sk": MosesTokenizer("sk"),
-    "hr": MosesTokenizer("en"), #TO DO
-    "me": MosesTokenizer("en"), #TO DO
-    "mk": MosesTokenizer("en"), #TO DO
-    "sq": MosesTokenizer("en"), #TO DO
-    "sr": MosesTokenizer("en"), #TO DO
-    "es": MosesTokenizer("es"),
-    "pt": MosesTokenizer("pt")
+    "nn": MosesTokenizer("nb") #TO DO
     }
 
 
@@ -82,6 +70,7 @@ class FastSpell:
     }
 
     hunspell_objs = {}
+    tokenizers={}
 
     def __init__(self, lang, mode="cons"):
         assert (mode=="cons" or mode=="aggr"), "Unknown mode. Use 'aggr' for aggressive or 'cons' for conservative"
@@ -102,9 +91,16 @@ class FastSpell:
         #for all the similar languages
         if self.similar != None:
             for l in self.similar:
+                #load dicts
                 dict = self.dictpath+self.hunspell_codes.get(l)
                 hunspell_obj = hunspell.HunSpell(dict+'.dic', dict+'.aff') 
                 self.hunspell_objs[l] = hunspell_obj
+                #load tokenizers
+                if l in self.special_tokenizers.keys():
+                    self.tokenizers[l] = self.special_tokenizers.get(l)
+                else:
+                    self.tokenizers[l] = MosesTokenizer(l)    
+                
 
 
     def getlang(self, sent):
