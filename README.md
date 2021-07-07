@@ -2,15 +2,64 @@
 
 Targetted language identifier, based on FastText and Hunspell.
 
+## How it works 
+
+FastSpell will try to determine the language of a sentence by using **[FastText](https://fasttext.cc/)**.
+
+If the language detected is very similar to the target language (i.e. FastText detected Spanish, while the targetted language is Galician), extra checks are performed with **[Hunspell](http://hunspell.github.io/)** to determine the language more precisely.
+
 ## Usage
 
+## Requirements & Installation
+
+**FastSpell** can be installed from source:
+```
+python3.7 setup.py install
+```
+Note that **Hunspell** requires `python-dev` and `libhunspell-dev`:
+
+```
+sudo apt-get install python-dev libhunspell-dev
+``` 
+Also note that Hunspell language packages must be installed by hand, i.e.:
+```
+sudo apt-get install hunspell-es
+```
+You can also provide the path to the Hunspell dictionaries directories by using the `dictpath` argument when building your FastSpell object (module-like usage) or as an argument to  `fastspell.py`(CLI-like usage). Default is `/usr/share/hunspell`
+
+### Module:
+In order to use **FastSpell** as a Python module, just install and import it :
+```
+from fastspell import FastSpell
+```
+Build a FastSpell object, like:
+```
+fsobj = FastSpell.FastSpell("en", mode="cons")
+```
+(learn more about modes in the section below)
+
+And then use the `getlang` function with the sentences you want to identify, for example:
+```
+fsobj.getlang("Hello, world")
+#'en'
+fsobj.getlang("Hola, mundo")
+#'es'
+
+```
+
+### CLI:
 ```
 usage: fastspell.py [-h] [--aggr] [--cons] [-q] [--debug] [--logfile LOGFILE]
                     [-v]
-                    lang
+                    lang [input] [output]
 
 positional arguments:
   lang
+  input              Input sentences. (default: <_io.TextIOWrapper
+                     name='<stdin>' encoding='UTF-8'>)
+  output             Output of the language identification. (default:
+                     <_io.TextIOWrapper name='<stdout>' mode='w'
+                     encoding='UTF-8'>)
 
 optional arguments:
   -h, --help         show this help message and exit
@@ -23,20 +72,14 @@ Logging:
   --logfile LOGFILE  Store log to a file (default: <_io.TextIOWrapper
                      name='<stderr>' mode='w' encoding='UTF-8'>)
   -v, --version      show version of this script and exit
+
 ```
-
-
-## How it works 
-
-FastSpell will try to determine the language of each sentence in the input by using **[FastText](https://fasttext.cc/)**.
-
-If the language detected is very similar to the target language (i.e. FastText detected Spanish, while the targetted language is Galician), extra checks are performed with **[Hunspell](http://hunspell.github.io/)** to determine the language more precisely.
 
 ## Aggressive vs Conservative
 
 FastSpell comes in two flavours: Aggressive and Conservative.
 
-The **Aggressive** version is less hesitant to tag a sentence with the target language, and never has doubts. The **Conservative** version, on the other hand, is more reluctant to tag a sentence with the target language and will use the `unk`(unknown) tag in case of doubt (when there is a tie between the target language and other language, for example)
+The **Aggressive** mode is less hesitant to tag a sentence with the target language, and never has doubts. The **Conservative** version, on the other hand, is more reluctant to tag a sentence with the target language and will use the `unk`(unknown) tag in case of doubt (when there is a tie between the target language and other language, for example)
 
 ## Benchmark 
 
@@ -60,8 +103,8 @@ Quen pode solicitar o dito financiamento?
 ```
 Command:
 ```
-cat inputtext | python3.7 fastspell.py $L --aggr
-cat inputtext | python3.7 fastspell.py $L --cons
+python3.7 fastspell.py $L --aggr inputtext
+python3.7 fastspell.py $L --cons inputtext
 ```
 Aggressive output:
 ```
