@@ -8,7 +8,6 @@ FastSpell will try to determine the language of a sentence by using **[FastText]
 
 If the language detected is very similar to the target language (i.e. FastText detected Spanish, while the targetted language is Galician), extra checks are performed with **[Hunspell](http://hunspell.github.io/)** to determine the language more precisely.
 
-## Usage
 
 ## Requirements & Installation
 
@@ -25,7 +24,31 @@ Also note that Hunspell language packages must be installed by hand, i.e.:
 ```
 sudo apt-get install hunspell-es
 ```
-You can also provide the path to the Hunspell dictionaries directories by using the `dictpath` argument when building your FastSpell object (module-like usage) or as an argument to  `fastspell.py`(CLI-like usage). Default is `/usr/share/hunspell`
+or downloaded from an external source, such as https://github.com/wooorm/dictionaries/tree/main/dictionaries 
+
+You can also provide the path to the Hunspell dictionaries directories by using the `dictpath` atribute in `/config/hunspell.yaml`. Default is `/usr/share/hunspell`
+
+### Configuration
+
+A few configuration files are provided under the `/config` directory.
+
+#### tokenizers.yaml
+
+By default, `MosesTokenizer(lang)` is used. When there is no specific rules for `lang`, Moses Tokenizer failsback to  English. For some languages, we know that using other language is better (for example, using Spanish for Galician instead of English). Tokenizers for these languages can be customized in this file.
+
+#### similar.yaml
+
+In this dictionary-like file, similar languages are stored. These are the languages that are going to be "double-checked" with Hunspell after being identified with FastText. For example, see the line `gl: [es, pt, gl] `. This means that, when the targetted language is Galician, and FastText identifies a given sentence as Spanish, Portuguese or Galician, extra checks will be performed with Hunspell to confirm which of the three similar languages is more suitable for the sentence.
+
+Please note that you need Hunspell dictionaries for all languages in this file. This file can be modified to remove a language you are not interested in, or a language for which you don't have Hunspell dictionaries, or to add new similar or target languages.
+
+#### hunspell.yaml
+
+In this file, both the path to Hunspell dictionary files  (default: `dictpath: /usr/share/hunspell/`) and the names of such dictionaries are stored. All similar languages must be in this list in order to properly work.
+
+For example, the first entry in the `hunspell_codes` is ` ca: ca_ES`, and the dictionary path is `/usr/share/hunspell/`. That means that the Hunspell files for Catalan are  `/usr/share/hunspell/ca_ES.dic` and `/usr/share/hunspell/ca_ES.aff`.
+
+## Usage
 
 ### Module:
 In order to use **FastSpell** as a Python module, just install and import it :
