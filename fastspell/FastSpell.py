@@ -66,13 +66,15 @@ class FastSpell:
 
         self.lang = lang
         self.mode = mode
+        
+        ft_model_path = os.path.join(self.cur_path, "lid.176.bin") #The model should be in the same directory
 
         try:
-            self.model = fasttext.load_model('lid.176.bin')  #FastText model
+            self.model = fasttext.load_model(ft_model_path)  #FastText model
         except ValueError as ex:
             logging.warning("Downloading FastText model...")
-            urllib.request.urlretrieve("https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.bin", "lid.176.bin")
-            self.model = fasttext.load_model('lid.176.bin') 
+            urllib.request.urlretrieve("https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.bin", ft_model_path)
+            self.model = fasttext.load_model(ft_model_path) 
 
         self.similar = self.similar_langs.get(lang)
 
