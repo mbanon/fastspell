@@ -11,7 +11,11 @@ If the language detected is very similar to the target language (i.e. FastText d
 
 ## Requirements & Installation
 
-**FastSpell** can be installed from source:
+**FastSpell** can be installed from PyPI
+```
+python3.7 -m pip install fastspell
+```
+or directly from source:
 ```
 python3.7 setup.py install
 ```
