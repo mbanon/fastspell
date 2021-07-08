@@ -1,0 +1,6 @@
+#Special tokenizers. If the lang is not in this list, MosesTokenizer(lang) will be used
+#(failing back to "en" if langnot exists)
+tokenizers:
+    gl: MosesTokenizer("es")
+    nn: MosesTokenizer("nb")
+    

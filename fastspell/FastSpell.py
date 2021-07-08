@@ -29,16 +29,14 @@ class FastSpell:
     
     #load config
     cur_path = os.path.dirname(__file__)
+    #similar languages
     similar_yaml_file = open(cur_path+"/config/similar.yaml")
     similar_langs = yaml.safe_load(similar_yaml_file)["similar"]
- 
+    #special tokenizers
+    special_tokenizers_file = open(cur_path+"/config/tokenizers.yaml")
+    special_tokenizers = yaml.safe_load(special_tokenizers_file)["tokenizers"]
 
-    #Special tokenizers. If the lang is not in this list, MosesTokenizer(lang) will be used
-    #(failing back to "en" if langnot exists)
-    special_tokenizers = {
-    "gl": MosesTokenizer("es"), #TO DO
-    "nn": MosesTokenizer("nb") #TO DO
-    }
+ 
 
 
     #This is how hunspell files (.dic and .aff) are named in dictpath
@@ -89,7 +87,7 @@ class FastSpell:
                 self.hunspell_objs[l] = hunspell_obj
                 #load tokenizers
                 if l in self.special_tokenizers.keys():
-                    self.tokenizers[l] = self.special_tokenizers.get(l)
+                    self.tokenizers[l] = eval(self.special_tokenizers.get(l))
                 else:
                     self.tokenizers[l] = MosesTokenizer(l)    
                 
