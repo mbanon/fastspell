@@ -5,7 +5,7 @@ import argparse
 import traceback
 import logging
 import os
-import FastSpell
+from fastspell import FastSpell
 
 
 __author__ = "Marta Bañón"

@@ -24,6 +24,9 @@ if __name__=="__main__":
         long_description_content_type="text/markdown",
         url="https://github.com/mbanon/fastspell",
         packages=["fastspell"],
+        package_data={
+            'fastspell': ['config/*'],
+        },
         classifiers=[
             "Environment :: Console",
             "Intended Audience :: Science/Research",
@@ -39,5 +42,7 @@ if __name__=="__main__":
             "FastSpell on GitHub": "https://github.com/mbanon/fastspell",
             "Prompsit Language Engineering": "http://www.prompsit.com",
             "Paracrawl": "https://paracrawl.eu/"
-             }
+             },
+       scripts=["scripts/fastspell"]            
+             
     )
