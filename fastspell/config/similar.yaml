@@ -1,0 +1,16 @@
+#Target langs (keys) dict for mistakeable languages (values)
+similar:
+    ca: [es, ca]
+    da: [da, nb]
+    es: [es, gl, ca]
+    gl: [es, pt, gl]
+    nb: [nn, da, nb]
+    nn: [nb, da, nn]
+    bs: [hr, sr, me, mk, sq, bs]
+    cs: [sk, cs]
+    sk: [cs, sk]
+    hr: [bs, sr, me, mk, sq, hr]
+    me: [bs, hr, mk, sr, sq, me]
+    mk: [bs, hr, me, sr, sq, mk]
+    sq: [bs, hr, me, mk, sr, sq]
+    sr: [bs, hr, me, mk, sq, sr]

@@ -1,8 +1,11 @@
+import os
+import yaml
 from sacremoses import MosesTokenizer
 import fasttext
 import hunspell
 import logging
 import urllib.request
+import pathlib
 
 
 
@@ -24,24 +27,11 @@ class FastSpell:
     dictpath="/usr/share/hunspell/" #Hunspell .dic and .aff files directory
     prefix = "__label__" #FastText returns langs labeled as __label__LANGCODE
     
-    #Target langs (keys) dict for mistakeable languages (values)
-    similar_langs = {
-    "ca":["es", "ca"],
-    "da":["da", "nb"],
-    "es":["es", "gl", "ca"],
-    "gl":["es", "pt", "gl"],
-    "nb":["nn", "da", "nb"],
-    "nn":["nb", "da", "nn"],
-    "bs":["hr", "sr", "me", "mk", "sq", "bs"],
-    "cs":["sk", "cs"],
-    "sk":["cs", "sk"],
-    "hr":["bs", "sr", "me", "mk", "sq", "hr"],
-    "me":["bs", "hr", "mk", "sr", "sq", "me"],
-    "mk":["bs", "hr", "me", "sr", "sq", "mk"],
-    "sq":["bs", "hr", "me", "mk", "sr", "sq"],
-    "sr":["bs", "hr", "me", "mk", "sq", "sr"]
-    }
-
+    #load config
+    cur_path = os.path.dirname(__file__)
+    similar_yaml_file = open(cur_path+"/config/similar.yaml")
+    similar_langs = yaml.safe_load(similar_yaml_file)["similar"]
+ 
 
     #Special tokenizers. If the lang is not in this list, MosesTokenizer(lang) will be used
     #(failing back to "en" if langnot exists)
@@ -87,6 +77,7 @@ class FastSpell:
             self.model = fasttext.load_model('lid.176.bin') 
 
         self.similar = self.similar_langs.get(lang)
+
         #If there are languages that can be mistaken 
         #with the target language: prepare an array of Hunspell spellcheckers
         #for all the similar languages
