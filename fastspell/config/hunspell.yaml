@@ -1,0 +1,21 @@
+#Hunspell dictionaries path
+dictpath: /usr/share/hunspell/
+
+#This is how hunspell files (.dic and .aff) are named in dictpath
+hunspell_codes:
+    ca: ca_ES
+    gl: gl_ES
+    nb: nb_NO
+    nn: nn_NO
+    da: da_DK
+    bs: bs_BA
+    cs: cs_CZ
+    sk: sk_SK
+    hr: hr_HR
+    me: sr_ME
+    mk: mk_MK
+    sq: sq_AL
+    sr: sr_Latn_RS
+    es: es_ES
+    pt: pt_PT
+    

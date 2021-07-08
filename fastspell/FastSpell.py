@@ -24,7 +24,6 @@ def remove_non_alpha_and_propernouns(tokens):
 class FastSpell:
     
     threshold = 0.25 #Hunspell max error rate allowed in a sentence
-    dictpath="/usr/share/hunspell/" #Hunspell .dic and .aff files directory
     prefix = "__label__" #FastText returns langs labeled as __label__LANGCODE
     
     #load config
@@ -35,29 +34,13 @@ class FastSpell:
     #special tokenizers
     special_tokenizers_file = open(cur_path+"/config/tokenizers.yaml")
     special_tokenizers = yaml.safe_load(special_tokenizers_file)["tokenizers"]
+    #hunspell 
+    hunspell_codes_file = open(cur_path+"/config/hunspell.yaml")
+    hunspell_config = yaml.safe_load(hunspell_codes_file) 
+    hunspell_codes = hunspell_config["hunspell_codes"]
+    dictpath = hunspell_config["dictpath"]
 
  
-
-
-    #This is how hunspell files (.dic and .aff) are named in dictpath
-    hunspell_codes = {
-    "ca": "ca_ES",
-    "gl": "gl_ES",
-    "nb": "nb_NO",
-    "nn": "nn_NO",
-    "da": "da_DK",
-    "bs": "bs_BA",
-    "cs": "cs_CZ",
-    "sk": "sk_SK",
-    "hr": "hr_HR",
-    "me": "sr_ME",
-    "mk": "mk_MK",
-    "sq": "sq_AL",
-    "sr": "sr_Latn_RS",
-    "es": "es_ES",
-    "pt": "pt_PT"
-    }
-
     hunspell_objs = {}
     tokenizers={}
 
