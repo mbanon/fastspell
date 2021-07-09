@@ -5,12 +5,15 @@ import argparse
 import traceback
 import logging
 import os
-from fastspell import FastSpell
+try:
+    from fastspell import FastSpell
+except ImportError:
+    import FastSpell    
 
 
 __author__ = "Marta Bañón"
 __version__ = "Version 0.1 # 01/07/2021 # Initial release # Marta Bañón"
-
+__version__ = "Version 0.1.1 # 01/07/2021 # Added pytests # Marta Bañón"
 
 
 

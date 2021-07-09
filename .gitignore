@@ -1,0 +1,4 @@
+dist/
+build/
+fastspell.egg-info/
+fastspell/__pycache__/
