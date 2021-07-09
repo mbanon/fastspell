@@ -38,7 +38,7 @@ A few configuration files are provided under the `/config` directory.
 
 #### tokenizers.yaml
 
-By default, `MosesTokenizer(lang)` is used. When there is no specific rules for `lang`, Moses Tokenizer failsback to  English. For some languages, we know that using other language is better (for example, using Spanish for Galician instead of English). Tokenizers for these languages can be customized in this file.
+By default, `MosesTokenizer(lang)` is used. When there is no specific rules for `lang`, Moses Tokenizer falls back to  English. For some languages, we know that using other language is better (for example, using Spanish for Galician instead of English). Tokenizers for these languages can be customized in this file.
 
 #### similar.yaml
 
