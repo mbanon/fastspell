@@ -25,7 +25,7 @@ if __name__=="__main__":
         url="https://github.com/mbanon/fastspell",
         packages=["fastspell"],
         package_data={
-            'fastspell': ['config/*'],
+            'fastspell': ['config/*', 'config/*/*']
         },
         classifiers=[
             "Environment :: Console",

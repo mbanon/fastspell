@@ -43,17 +43,22 @@ class FastSpell:
     
     #load config
     cur_path = os.path.dirname(__file__)
+    config_path = cur_path + "/config/"
     #similar languages
-    similar_yaml_file = open(cur_path+"/config/similar.yaml")
+    similar_yaml_file = open(config_path+"similar.yaml")
     similar_langs = yaml.safe_load(similar_yaml_file)["similar"]
     #special tokenizers
-    special_tokenizers_file = open(cur_path+"/config/tokenizers.yaml")
+    special_tokenizers_file = open(config_path+"tokenizers.yaml")
     special_tokenizers = yaml.safe_load(special_tokenizers_file)["tokenizers"]
     #hunspell 
-    hunspell_codes_file = open(cur_path+"/config/hunspell.yaml")
+    hunspell_codes_file = open(config_path+"hunspell.yaml")
     hunspell_config = yaml.safe_load(hunspell_codes_file) 
     hunspell_codes = hunspell_config["hunspell_codes"]
-    dictpath = hunspell_config["dictpath"]
+    if os.path.isabs(hunspell_config["dictpath"]):
+        dictpath = hunspell_config["dictpath"]
+    else:    
+        dictpath = os.path.join(config_path, hunspell_config["dictpath"])
+
 
  
     hunspell_objs = {}
@@ -80,19 +85,25 @@ class FastSpell:
         #If there are languages that can be mistaken 
         #with the target language: prepare an array of Hunspell spellcheckers
         #for all the similar languages
-        if self.similar != None:
+        if self.similar != None:            
             for l in self.similar:
                 #load dicts
-                dict = self.dictpath+self.hunspell_codes.get(l)
-                hunspell_obj = hunspell.HunSpell(dict+'.dic', dict+'.aff') 
-                self.hunspell_objs[l] = hunspell_obj
+                try:
+                    dict = self.dictpath+self.hunspell_codes.get(l)
+                    hunspell_obj = hunspell.HunSpell(dict+'.dic', dict+'.aff') 
+                    self.hunspell_objs[l] = hunspell_obj
+                except hunspell.HunSpellError:
+                    logging.error("Failed building Hunspell object for "+l)
+                    logging.error("Please check that " + dict+".dic" + " and " + dict+'.aff' + " do exist.")
+                    logging.error("Aborting.") 
+                    exit(1)
                 #load tokenizers
                 if l in self.special_tokenizers.keys():
                     self.tokenizers[l] = eval(self.special_tokenizers.get(l))
                 else:
                     self.tokenizers[l] = MosesTokenizer(l)    
                 
-
+                    
 
     def getlang(self, sent):
         sent=sent.strip()
