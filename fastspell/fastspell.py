@@ -13,7 +13,7 @@ except ImportError:
 
 __author__ = "Marta Bañón"
 __version__ = "Version 0.1 # 01/07/2021 # Initial release # Marta Bañón"
-__version__ = "Version 0.1.1 # 01/07/2021 # Added pytests # Marta Bañón"
+__version__ = "Version 0.1.1 # 01/07/2021 # More flexible management of paths and imports # Marta Bañón"
 
 
 
