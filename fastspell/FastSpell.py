@@ -6,6 +6,7 @@ import hunspell
 import logging
 import urllib.request
 import pathlib
+import hashlib
 
 
 
@@ -20,11 +21,25 @@ def remove_non_alpha_and_propernouns(tokens):
             newtokens.append(token.lower())
         isfirsttoken=False    
     return newtokens        
+    
+    
+def getHash(filepath):
+    hash = None
+    try:
+        with open(filepath, 'rb') as model_file:
+            file_content = model_file.read()
+            md5Hash = hashlib.md5(file_content)
+            hash = md5Hash.hexdigest()
+        return hash    
+    except FileNotFoundError:
+        return None    
+   
 
 class FastSpell:
     
     threshold = 0.25 #Hunspell max error rate allowed in a sentence
     prefix = "__label__" #FastText returns langs labeled as __label__LANGCODE
+    ft_model_hash = "01810bc59c6a3d2b79c79e6336612f65"
     
     #load config
     cur_path = os.path.dirname(__file__)
@@ -51,10 +66,11 @@ class FastSpell:
         self.mode = mode
         
         ft_model_path = os.path.join(self.cur_path, "lid.176.bin") #The model should be in the same directory
-
-        try:
+        
+        hash = getHash(ft_model_path)        
+        if hash == self.ft_model_hash:
             self.model = fasttext.load_model(ft_model_path)  #FastText model
-        except ValueError as ex:
+        else:
             logging.warning("Downloading FastText model...")
             urllib.request.urlretrieve("https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.bin", ft_model_path)
             self.model = fasttext.load_model(ft_model_path) 
