@@ -12,7 +12,7 @@ if __name__=="__main__":
 
     setuptools.setup(
         name="fastspell",
-        version="0.1.1",
+        version="0.1.2",
         install_requires=requirements,
         license="GNU General Public License v3.0",
         author="Prompsit Language Engineering",
@@ -25,7 +25,7 @@ if __name__=="__main__":
         url="https://github.com/mbanon/fastspell",
         packages=["fastspell"],
         package_data={
-            'fastspell': ['config/*', 'config/*/*']
+            'fastspell': ['config/*.yaml']
         },
         classifiers=[
             "Environment :: Console",
