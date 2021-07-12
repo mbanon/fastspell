@@ -30,7 +30,7 @@ sudo apt-get install hunspell-es
 ```
 or downloaded from an external source, such as https://github.com/wooorm/dictionaries/tree/main/dictionaries 
 
-You can also provide the path to the Hunspell dictionaries directories by using the `dictpath` atribute in `/config/hunspell.yaml`. Default is `/usr/share/hunspell`
+You can also provide the path to the Hunspell dictionaries directories by using the dictpath atribute in `{/YOUR/INSTALLATION/PATH}/config/hunspell.yaml` (for example, `venv/lib/python3.7/site-packages/fastspell/config/hunspell.yaml` ) if you are installing from PyPI or with `setup.py`, or in `/config/hunspell.yaml` if you are running directly the code. Default path is `/usr/share/hunspell`.
 
 ### Configuration
 
