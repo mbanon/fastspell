@@ -111,6 +111,10 @@ class FastSpell:
         #classic norwegian ñapa
         if prediction == "no":
             prediction = "nb"
+        #New serbo-croatian ñapa    
+        if prediction == "sh":
+            prediction = "sr"
+            
         #TODO: Confidence score?
 
         if self.similar == None or prediction not in self.similar:
