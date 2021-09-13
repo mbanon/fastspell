@@ -13,12 +13,17 @@ import hashlib
 #Removes punctuation and propernouns to avoid 
 #Hunspell error rates too high
 #and focus only on "normal" words.
-def remove_non_alpha_and_propernouns(tokens):
+#Uppercased (propernouns) rule does not apply to German
+def remove_non_alpha_and_propernouns(tokens, lang):
     newtokens = []
     isfirsttoken=True
     for token in tokens:
-        if token.upper() != token.lower() and (isfirsttoken or token[0]!=token[0].upper()):    
-            newtokens.append(token.lower())
+        if lang=="de":
+            if token.upper() != token.lower():
+                newtokens.append(token)
+        else:
+            if token.upper() != token.lower() and (isfirsttoken or token[0]!=token[0].upper()):    
+                newtokens.append(token.lower())
         isfirsttoken=False    
     return newtokens        
     
@@ -128,7 +133,7 @@ class FastSpell:
                 logging.debug(l)
                 dec_sent = sent.encode(encoding='UTF-8',errors='strict').decode('UTF-8') #Not 100% sure about this...
                 raw_toks = self.tokenizers.get(l).tokenize(dec_sent, escape=False)
-                toks = remove_non_alpha_and_propernouns(raw_toks)
+                toks = remove_non_alpha_and_propernouns(raw_toks, self.lang)
                 try:
                     correct_list = list(map(self.hunspell_objs.get(l).spell, toks))
                 except UnicodeEncodeError: #...because it sometimes fails here for certain characters

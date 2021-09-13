@@ -76,7 +76,7 @@ fsobj.getlang("Hola, mundo")
 
 ### CLI:
 ```
-usage: fastspell.py [-h] [--aggr] [--cons] [-q] [--debug] [--logfile LOGFILE]
+usage:  fastspell [-h] [--aggr] [--cons] [-q] [--debug] [--logfile LOGFILE]
                     [-v]
                     lang [input] [output]
 
@@ -130,8 +130,8 @@ Quen pode solicitar o dito financiamento?
 ```
 Command:
 ```
-python3.7 fastspell.py $L --aggr inputtext
-python3.7 fastspell.py $L --cons inputtext
+python3.7 pyfastspell $L --aggr inputtext
+python3.7 pyfastspell $L --cons inputtext
 ```
 Aggressive output:
 ```
@@ -162,8 +162,8 @@ Quen pode solicitar o dito financiamento?       gl
 ```
 Getting stats:
 ```
-cat inputtext | python3.7 fastspell.py $L --aggr | cut -f2 | sort | uniq -c | sort -nr
-cat inputtext | python3.7 fastspell.py $L --cons | cut -f2 | sort | uniq -c | sort -nr
+cat inputtext | python3.7 pyfastspell $L --aggr | cut -f2 | sort | uniq -c | sort -nr
+cat inputtext | python3.7 pyfastspell $L --cons | cut -f2 | sort | uniq -c | sort -nr
 ```
 Aggressive:
 ```
