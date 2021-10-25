@@ -3,6 +3,7 @@ dictpath: /usr/share/hunspell/
 
 #This is how hunspell files (.dic and .aff) are named in dictpath
 hunspell_codes:
+    bg: bg_BG
     ca: ca_ES
     gl: gl_ES
     nb: nb_NO
