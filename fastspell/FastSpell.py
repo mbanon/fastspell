@@ -1,23 +1,24 @@
 import os
 import yaml
-from sacremoses import MosesTokenizer
+#from sacremoses import MosesTokenizer
 import fasttext
 import hunspell
 import logging
 import urllib.request
 import pathlib
 import hashlib
-
+from string import punctuation
 
 
 #Removes punctuation and propernouns to avoid 
 #Hunspell error rates too high
 #and focus only on "normal" words.
 #Uppercased (propernouns) rule does not apply to German
-def remove_non_alpha_and_propernouns(tokens, lang):
+def remove_unwanted_words(tokens, lang):
     newtokens = []
     isfirsttoken=True
     for token in tokens:
+        token=token.strip(punctuation+" ")
         if lang=="de":
             if token.upper() != token.lower():
                 newtokens.append(token)
@@ -53,8 +54,10 @@ class FastSpell:
     similar_yaml_file = open(config_path+"similar.yaml")
     similar_langs = yaml.safe_load(similar_yaml_file)["similar"]
     #special tokenizers
+    '''
     special_tokenizers_file = open(config_path+"tokenizers.yaml")
     special_tokenizers = yaml.safe_load(special_tokenizers_file)["tokenizers"]
+    '''
     #hunspell 
     hunspell_codes_file = open(config_path+"hunspell.yaml")
     hunspell_config = yaml.safe_load(hunspell_codes_file) 
@@ -67,7 +70,8 @@ class FastSpell:
 
  
     hunspell_objs = {}
-    tokenizers={}
+
+    #tokenizers={}
 
     def __init__(self, lang, mode="cons"):
         assert (mode=="cons" or mode=="aggr"), "Unknown mode. Use 'aggr' for aggressive or 'cons' for conservative"
@@ -103,11 +107,12 @@ class FastSpell:
                     logging.error("Aborting.") 
                     exit(1)
                 #load tokenizers
+                '''
                 if l in self.special_tokenizers.keys():
                     self.tokenizers[l] = eval(self.special_tokenizers.get(l))
                 else:
                     self.tokenizers[l] = MosesTokenizer(l)    
-                
+                '''
                     
 
     def getlang(self, sent):
@@ -132,8 +137,9 @@ class FastSpell:
                 #Get spellchecking for all the mistakeable languages
                 logging.debug(l)
                 dec_sent = sent.encode(encoding='UTF-8',errors='strict').decode('UTF-8') #Not 100% sure about this...
-                raw_toks = self.tokenizers.get(l).tokenize(dec_sent, escape=False)
-                toks = remove_non_alpha_and_propernouns(raw_toks, self.lang)
+                #raw_toks = self.tokenizers.get(l).tokenize(dec_sent, escape=False)
+                raw_toks = sent.strip().split(" ")
+                toks = remove_unwanted_words(raw_toks, self.lang)
                 try:
                     correct_list = list(map(self.hunspell_objs.get(l).spell, toks))
                 except UnicodeEncodeError: #...because it sometimes fails here for certain characters
