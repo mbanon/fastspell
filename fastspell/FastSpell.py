@@ -116,7 +116,8 @@ class FastSpell:
                     
 
     def getlang(self, sent):
-        sent=sent.strip()
+        
+        sent=sent.replace("\n", " ").strip()
         prediction = self.model.predict(sent, k=1)[0][0][len(self.prefix):]
         #classic norwegian ñapa
         if prediction == "no":
