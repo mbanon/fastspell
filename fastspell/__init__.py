@@ -2,4 +2,4 @@
 
 name="fastspell"
 
-from . import pyfastspell
+from . import fastspell
