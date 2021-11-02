@@ -12,7 +12,7 @@ if __name__=="__main__":
 
     setuptools.setup(
         name="fastspell",
-        version="0.1.3",
+        version="0.1.4",
         install_requires=requirements,
         license="GNU General Public License v3.0",
         author="Prompsit Language Engineering",
