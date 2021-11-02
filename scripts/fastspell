@@ -2,13 +2,14 @@
 
 import sys
 import logging
-import fastspell.fastspell as fastspell
+import fastspell.pyfastspell as pyfastspell
+
 
 def main(argv):
     try:
-        fastspell.logging_setup()
-        args = fastspell.initialization()
-        fastspell.main(args)
+        pyfastspell.logging_setup()
+        args = pyfastspell.initialization()
+        pyfastspell.main(args)
     except Exception as es:
         tb = traceback.format_exc()
         logging.error(tb)

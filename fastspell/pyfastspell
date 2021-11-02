@@ -7,8 +7,9 @@ import argparse
 import traceback
 import logging
 import os
+
 try:
-    from fastspell import FastSpell
+    from . import FastSpell
 except ImportError:
     import FastSpell    
 
