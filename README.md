@@ -130,8 +130,8 @@ Quen pode solicitar o dito financiamento?
 ```
 Command:
 ```
-python3.7 pyfastspell $L --aggr inputtext
-python3.7 pyfastspell $L --cons inputtext
+python3.7 fastspell $L --aggr inputtext
+python3.7 fastspell $L --cons inputtext
 ```
 Aggressive output:
 ```
@@ -162,8 +162,8 @@ Quen pode solicitar o dito financiamento?       gl
 ```
 Getting stats:
 ```
-cat inputtext | python3.7 pyfastspell $L --aggr | cut -f2 | sort | uniq -c | sort -nr
-cat inputtext | python3.7 pyfastspell $L --cons | cut -f2 | sort | uniq -c | sort -nr
+cat inputtext | python3.7 fastspell $L --aggr | cut -f2 | sort | uniq -c | sort -nr
+cat inputtext | python3.7 fastspell $L --cons | cut -f2 | sort | uniq -c | sort -nr
 ```
 Aggressive:
 ```
