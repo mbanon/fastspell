@@ -1,6 +1,5 @@
 import os
 import yaml
-#from sacremoses import MosesTokenizer
 import fasttext
 import hunspell
 import logging
@@ -53,11 +52,8 @@ class FastSpell:
     #similar languages
     similar_yaml_file = open(config_path+"similar.yaml")
     similar_langs = yaml.safe_load(similar_yaml_file)["similar"]
-    #special tokenizers
-    '''
-    special_tokenizers_file = open(config_path+"tokenizers.yaml")
-    special_tokenizers = yaml.safe_load(special_tokenizers_file)["tokenizers"]
-    '''
+
+
     #hunspell 
     hunspell_codes_file = open(config_path+"hunspell.yaml")
     hunspell_config = yaml.safe_load(hunspell_codes_file) 
@@ -106,14 +102,7 @@ class FastSpell:
                     logging.error("Please check that " + dict+".dic" + " and " + dict+'.aff' + " do exist.")
                     logging.error("Aborting.") 
                     exit(1)
-                #load tokenizers
-                '''
-                if l in self.special_tokenizers.keys():
-                    self.tokenizers[l] = eval(self.special_tokenizers.get(l))
-                else:
-                    self.tokenizers[l] = MosesTokenizer(l)    
-                '''
-                    
+
 
     def getlang(self, sent):
         
@@ -138,7 +127,6 @@ class FastSpell:
                 #Get spellchecking for all the mistakeable languages
                 logging.debug(l)
                 dec_sent = sent.encode(encoding='UTF-8',errors='strict').decode('UTF-8') #Not 100% sure about this...
-                #raw_toks = self.tokenizers.get(l).tokenize(dec_sent, escape=False)
                 raw_toks = sent.strip().split(" ")
                 toks = remove_unwanted_words(raw_toks, self.lang)
                 try:
