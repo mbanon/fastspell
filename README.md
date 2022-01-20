@@ -32,6 +32,18 @@ or downloaded from an external source, such as https://github.com/wooorm/diction
 
 You can also provide the path to the Hunspell dictionaries directories by using the dictpath atribute in `{/YOUR/INSTALLATION/PATH}/config/hunspell.yaml` (for example, `venv/lib/python3.7/site-packages/fastspell/config/hunspell.yaml` ) if you are installing from PyPI or with `setup.py`, or in `/config/hunspell.yaml` if you are running directly the code. Default path is `/usr/share/hunspell`.
 
+### RedHat installation
+For RedHat and its derivatives
+```
+sudo dnf install hunspell hunspell-devel
+```
+must be ran to install Hunspell.
+
+If you found an installation error during `pip install hunspell` that says `/usr/bin/ld: cannot find -lhunspell`, you'll probably need to add a symlink to `/usr/lib64` or other path in your environment (like `/home/user/.local/lib`).
+```
+sudo ln -s /usr/lib64/libhunspell-1.7.so /usr/lib64/libhunspell.so
+```
+
 ### Configuration
 
 A few configuration files are provided under the `/config` directory.
