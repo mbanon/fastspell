@@ -48,10 +48,6 @@ sudo ln -s /usr/lib64/libhunspell-1.7.so /usr/lib64/libhunspell.so
 
 A few configuration files are provided under the `/config` directory.
 
-#### tokenizers.yaml
-
-By default, `MosesTokenizer(lang)` is used. When there is no specific rules for `lang`, Moses Tokenizer falls back to  English. For some languages, we know that using other language is better (for example, using Spanish for Galician instead of English). Tokenizers for these languages can be customized in this file.
-
 #### similar.yaml
 
 In this dictionary-like file, similar languages are stored. These are the languages that are going to be "double-checked" with Hunspell after being identified with FastText. For example, see the line `gl: [es, pt, gl] `. This means that, when the targetted language is Galician, and FastText identifies a given sentence as Spanish, Portuguese or Galician, extra checks will be performed with Hunspell to confirm which of the three similar languages is more suitable for the sentence.
