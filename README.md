@@ -32,6 +32,11 @@ or downloaded from an external source, such as https://github.com/wooorm/diction
 
 You can also provide the path to the Hunspell dictionaries directories by using the dictpath atribute in `{/YOUR/INSTALLATION/PATH}/config/hunspell.yaml` (for example, `venv/lib/python3.7/site-packages/fastspell/config/hunspell.yaml` ) if you are installing from PyPI or with `setup.py`, or in `/config/hunspell.yaml` if you are running directly the code. Default path is `/usr/share/hunspell`.
 
+Also, you can install the conda package:
+```
+conda install -c conda-forge -c bitextor fastspell
+```
+
 ### RedHat installation
 For RedHat and its derivatives
 ```
