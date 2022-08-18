@@ -8,6 +8,7 @@ import pathlib
 import hashlib
 from string import punctuation
 
+fasttext.FastText.eprint = lambda x: None
 
 #Removes punctuation and propernouns to avoid 
 #Hunspell error rates too high
