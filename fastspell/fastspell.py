@@ -1,47 +1,33 @@
 #!/usr/bin/env python
-
+import os
 import io
 import sys
+import yaml
+import fasttext
+import hunspell
+import logging
+import urllib.request
+import pathlib
 import timeit
 import argparse
 import traceback
 import logging
-import os
+from string import punctuation
 
 try:
-    from . import FastSpell
+    from .util import logging_setup, remove_unwanted_words, get_hash
 except ImportError:
-    import FastSpell    
-
+    from util import logging_setup, remove_unwanted_words, get_hash
 
 __author__ = "Marta Bañón"
 __version__ = "Version 0.1 # 01/07/2021 # Initial release # Marta Bañón"
 __version__ = "Version 0.1.1 # 01/07/2021 # More flexible management of paths and imports # Marta Bañón"
 __version__ = "Version 0.2 # 25/10/2021 # Removed tokenization # Marta Bañón"
 
+fasttext.FastText.eprint = lambda x: None
 
-def logging_setup(args = None):
-    logger = logging.getLogger()
-    logger.handlers = [] # Removing default handler to avoid duplication of log messages
-    logger.setLevel(logging.ERROR)
     
-    h = logging.StreamHandler(sys.stderr)
-    if args != None:
-       h = logging.StreamHandler(args.logfile)
-      
-    h.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
-    logger.addHandler(h)
-
-    logger.setLevel(logging.INFO)
-    
-    if args != None:
-        if not args.quiet:
-            logger.setLevel(logging.INFO)
-        if args.debug:
-            logger.setLevel(logging.DEBUG)
-            
-            
-
+   
 def initialization():
     parser = argparse.ArgumentParser(prog=os.path.basename(sys.argv[0]), formatter_class=argparse.ArgumentDefaultsHelpFormatter, description=__doc__)
     parser.add_argument('lang', type=str)
@@ -66,40 +52,165 @@ def initialization():
         exit(1)
     return args
 
+class FastSpell:
+    
+    threshold = 0.25 #Hunspell max error rate allowed in a sentence
+    prefix = "__label__" #FastText returns langs labeled as __label__LANGCODE
+    ft_model_hash = "01810bc59c6a3d2b79c79e6336612f65"
+    
+    #load config
+    cur_path = os.path.dirname(__file__)
+    config_path = cur_path + "/config/"
+    #similar languages
+    similar_yaml_file = open(config_path+"similar.yaml")
+    similar_langs = yaml.safe_load(similar_yaml_file)["similar"]
 
 
+    #hunspell 
+    hunspell_codes_file = open(config_path+"hunspell.yaml")
+    hunspell_config = yaml.safe_load(hunspell_codes_file) 
+    hunspell_codes = hunspell_config["hunspell_codes"]
+    if os.path.isabs(hunspell_config["dictpath"]):
+        dictpath = hunspell_config["dictpath"]
+    else:    
+        dictpath = os.path.join(config_path, hunspell_config["dictpath"])
+
+
+ 
+    hunspell_objs = {}
+
+    #tokenizers={}
+
+    def __init__(self, lang, mode="cons"):
+        assert (mode=="cons" or mode=="aggr"), "Unknown mode. Use 'aggr' for aggressive or 'cons' for conservative"
+
+        self.lang = lang
+        self.mode = mode
+        
+        ft_model_path = os.path.join(self.cur_path, "lid.176.bin") #The model should be in the same directory
+        
+        hash = get_hash(ft_model_path)
+        if hash == self.ft_model_hash:
+            self.model = fasttext.load_model(ft_model_path)  #FastText model
+        else:
+            logging.warning("Downloading FastText model...")
+            urllib.request.urlretrieve("https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.bin", ft_model_path)
+            self.model = fasttext.load_model(ft_model_path) 
+
+        self.similar = self.similar_langs.get(lang)
+
+        #If there are languages that can be mistaken 
+        #with the target language: prepare an array of Hunspell spellcheckers
+        #for all the similar languages
+        if self.similar != None:            
+            for l in self.similar:
+                #load dicts
+                try:
+                    dict = self.dictpath+self.hunspell_codes.get(l)
+                    hunspell_obj = hunspell.HunSpell(dict+'.dic', dict+'.aff') 
+                    self.hunspell_objs[l] = hunspell_obj
+                except hunspell.HunSpellError:
+                    logging.error("Failed building Hunspell object for "+l)
+                    logging.error("Please check that " + dict+".dic" + " and " + dict+'.aff' + " do exist.")
+                    logging.error("Aborting.") 
+                    exit(1)
+
+
+    def getlang(self, sent):
+        
+        sent=sent.replace("\n", " ").strip()
+        prediction = self.model.predict(sent, k=1)[0][0][len(self.prefix):]
+        #classic norwegian ñapa
+        if prediction == "no":
+            prediction = "nb"
+        #New serbo-croatian ñapa    
+        if prediction == "sh":
+            prediction = "sr"
+            
+        #TODO: Confidence score?
+
+        if self.similar == None or prediction not in self.similar:
+        #Non mistakeable language: just return FastText prediction
+            return(prediction)
+        else:
+        #The target language is mistakeable
+            spellchecked = {}
+            for l in self.hunspell_objs:
+                #Get spellchecking for all the mistakeable languages
+                logging.debug(l)
+                dec_sent = sent.encode(encoding='UTF-8',errors='strict').decode('UTF-8') #Not 100% sure about this...
+                raw_toks = sent.strip().split(" ")
+                toks = remove_unwanted_words(raw_toks, self.lang)
+                try:
+                    correct_list = list(map(self.hunspell_objs.get(l).spell, toks))
+                except UnicodeEncodeError: #...because it sometimes fails here for certain characters
+                    correct_list = []
+                corrects = sum(correct_list*1)
+                logging.debug("Tokens: " +str(toks))
+                logging.debug("Corrects: " + str(correct_list))
+                logging.debug("Total: " + str(len(toks)))
+                if corrects > 0:
+                    error_rate = 1-(corrects/len(toks))
+                else:
+                    error_rate = 1
+                logging.debug("error_rate: " + str(error_rate))
+                if error_rate < self.threshold: #we don't keep it if the error rate is above the threshold
+                    spellchecked[l] =  error_rate
+                logging.debug("----------------")
+
+            if len(spellchecked) > 0:
+                #at least one of the spellchecks was below the threshold            
+                #get best values and keys
+                best_value = min(spellchecked.values())
+                best_keys = [k for k, v in spellchecked.items() if v == best_value]
+                if len(best_keys)==1:
+                    #Only one language scoring the best
+                    return(best_keys[0])
+                else:
+                    #It's a tie!
+                    if self.mode == "aggr":
+                        #Aggressive approach: if the targetted language is among the best scoring, take it
+                        if self.lang in best_keys:
+                            return(self.lang)
+                        elif prediction in best_keys:
+                            #the targetted language is not in the best ones, and the prediction?
+                            return(prediction)
+                        else:
+                            #Just take one
+                            return(best_keys[0])
+                    if self.mode == "cons":
+                        #Conservative: just keep it as unknown
+                        return("unk")
+            else:
+                #Nothing in the spellchecking list
+                if self.mode == "aggr":
+                    return(prediction)
+                else:
+                    return("unk")
 
 def perform_identification(args):
-
     time_start = timeit.default_timer()
     if args.aggr:
         mode="aggr"
     if args.cons:
         mode="cons"
         
-    fs = FastSpell.FastSpell(args.lang, mode=mode)
+    fs = FastSpell(args.lang, mode=mode)
     
     for line in args.input:        
         lident = fs.getlang(line)
         args.output.write(line.strip()+"\t"+lident+"\n")
         
     end_time = timeit.default_timer()
-    logging.info("Elapsed time: {}".format(end_time - time_start))     
-         
+    logging.info("Elapsed time: {}".format(end_time - time_start))
 
 
-
-def main(args):
+def main():
+    logging_setup()
+    args = initialization() # Parsing parameters
     logging.info("Executing main program...")
     perform_identification(args)
     logging.info("Program finished")
 
 if __name__ == '__main__':
-    try:
-        logging_setup()
-        args = initialization() # Parsing parameters
-        main(args)  # Running main program
-    except Exception as ex:
-        tb = traceback.format_exc()
-        logging.error(tb)
-        sys.exit(1)
+    main()

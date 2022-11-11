@@ -43,6 +43,7 @@ if __name__=="__main__":
             "Prompsit Language Engineering": "http://www.prompsit.com",
             "Paracrawl": "https://paracrawl.eu/"
              },
-       scripts=["scripts/fastspell"]            
-             
+        entry_points={
+            "console_scripts": ["fastspell=fastspell.fastspell:main"],
+        }
     )
