@@ -36,7 +36,7 @@ def initialization():
     
     parser.add_argument('--aggr', action='store_true', help='Aggressive strategy (more positives)')
     parser.add_argument('--cons', action='store_true',  help='Conservative strategy (less positives)')
-    parser.add_argument('--hbs', action='store_true',  help="Return all Serbo-Croatian variants as 'hbs'")
+    parser.add_argument('--hbs', action='store_true',  help="Tag all Serbo-Croatian variants as 'hbs'")
     
     groupL = parser.add_argument_group('Logging')
     groupL.add_argument('-q', '--quiet', action='store_true', help='Silent logging mode')

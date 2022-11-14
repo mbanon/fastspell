@@ -89,9 +89,9 @@ fsobj.getlang("Hola, mundo")
 
 ### CLI:
 ```
-usage:  fastspell [-h] [--aggr] [--cons] [-q] [--debug] [--logfile LOGFILE]
-                    [-v]
-                    lang [input] [output]
+iusage: fastspell [-h] [--aggr] [--cons] [--hbs] [-q] [--debug]
+                 [--logfile LOGFILE] [-v]
+                 lang [input] [output]
 
 positional arguments:
   lang
@@ -105,6 +105,8 @@ optional arguments:
   -h, --help         show this help message and exit
   --aggr             Aggressive strategy (more positives) (default: False)
   --cons             Conservative strategy (less positives) (default: False)
+  --hbs              Return all Serbo-Croatian variants as 'hbs' (default:
+                     False)
 
 Logging:
   -q, --quiet        Silent logging mode (default: False)
@@ -112,7 +114,6 @@ Logging:
   --logfile LOGFILE  Store log to a file (default: <_io.TextIOWrapper
                      name='<stderr>' mode='w' encoding='UTF-8'>)
   -v, --version      show version of this script and exit
-
 ```
 
 ## Aggressive vs Conservative
