@@ -26,8 +26,9 @@ __version__ = "Version 0.3 # 14/11/2022 # Serbo-Croatian mode # Jaume Zaragoza"
 
 fasttext.FastText.eprint = lambda x: None
 
-    
-   
+HBS_LANGS = ('hbs', 'sh', 'bs', 'sr', 'hr', 'me')
+
+
 def initialization():
     parser = argparse.ArgumentParser(prog=os.path.basename(sys.argv[0]), formatter_class=argparse.ArgumentDefaultsHelpFormatter, description=__doc__)
     parser.add_argument('lang', type=str)
@@ -37,6 +38,7 @@ def initialization():
     parser.add_argument('--aggr', action='store_true', help='Aggressive strategy (more positives)')
     parser.add_argument('--cons', action='store_true',  help='Conservative strategy (less positives)')
     parser.add_argument('--hbs', action='store_true',  help="Tag all Serbo-Croatian variants as 'hbs'")
+    parser.add_argument('--script', action='store_true',  help="Detect writing script (currently only Serbo-Croatian is supported)")
     
     groupL = parser.add_argument_group('Logging')
     groupL.add_argument('-q', '--quiet', action='store_true', help='Silent logging mode')
@@ -51,6 +53,10 @@ def initialization():
         #both are true or both are false
         logging.error("Please provide  --aggr or --cons")
         exit(1)
+
+    if args.script and args.lang not in HBS_LANGS:
+        logging.warning("Script detection is only supported with Serbo-Croatian")
+
     return args
 
 class FastSpell:
@@ -82,12 +88,13 @@ class FastSpell:
 
     #tokenizers={}
 
-    def __init__(self, lang, mode="cons", hbs=False):
+    def __init__(self, lang, mode="cons", hbs=False, script=False):
         assert (mode=="cons" or mode=="aggr"), "Unknown mode. Use 'aggr' for aggressive or 'cons' for conservative"
 
         self.lang = lang
         self.mode = mode
         self.hbs = hbs
+        self.script = script
         
         ft_model_path = os.path.join(self.cur_path, "lid.176.bin") #The model should be in the same directory
         
@@ -117,6 +124,26 @@ class FastSpell:
                     logging.error("Aborting.") 
                     exit(1)
 
+        # Crate translate tables for script detection
+        if script:
+            self.script_tables = {
+                'hbs_lat': str.maketrans('', '', 'aAbBcčČćĆdDđĐeEfFgGhHiIjJkKlLmMnNoOpPrRsSšŠtuUvVzZžŽ'),
+                'hbs_cyr': str.maketrans('', '', 'АаБбВвГгДддЂђЕеЖжЗзИиЙйКкkЛлЉљМмНнЊњОоПпРрЋћТтУуФфХхЦцЧчШшЩщ'),
+            }
+
+    def getscript(self, sent):
+        # Return as detected script the one that its translate table
+        # deletes more characters
+        best_count = sys.maxsize
+        best_script = None
+        for script in self.script_tables.keys():
+            count_chars = len(sent.translate(self.script_tables[script]))
+            if count_chars < best_count:
+                best_count = count_chars
+                best_script = script
+
+        return best_script
+
 
     def getlang(self, sent):
         
@@ -124,7 +151,9 @@ class FastSpell:
         prediction = self.model.predict(sent, k=1)[0][0][len(self.prefix):]
 
         # Return 'hbs' for all serbo-croatian variants
-        if self.hbs and prediction in ('sh', 'bs', 'sr', 'hr', 'me'):
+        if self.hbs and prediction in HBS_LANGS:
+            if self.script:
+                return self.getscript(sent)
             return 'hbs'
 
         #classic norwegian ñapa
@@ -202,7 +231,7 @@ def perform_identification(args):
     if args.cons:
         mode="cons"
         
-    fs = FastSpell(args.lang, mode=mode, hbs=args.hbs)
+    fs = FastSpell(args.lang, mode=mode, hbs=args.hbs, script=args.script)
     
     for line in args.input:        
         lident = fs.getlang(line)
