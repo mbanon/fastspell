@@ -202,7 +202,7 @@ def perform_identification(args):
     if args.cons:
         mode="cons"
         
-    fs = FastSpell(args.lang, mode=mode)
+    fs = FastSpell(args.lang, mode=mode, hbs=args.hbs)
     
     for line in args.input:        
         lident = fs.getlang(line)
