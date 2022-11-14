@@ -36,6 +36,7 @@ def initialization():
     
     parser.add_argument('--aggr', action='store_true', help='Aggressive strategy (more positives)')
     parser.add_argument('--cons', action='store_true',  help='Conservative strategy (less positives)')
+    parser.add_argument('--hbs', action='store_true',  help="Return all Serbo-Croatian variants as 'hbs'")
     
     groupL = parser.add_argument_group('Logging')
     groupL.add_argument('-q', '--quiet', action='store_true', help='Silent logging mode')
@@ -81,11 +82,12 @@ class FastSpell:
 
     #tokenizers={}
 
-    def __init__(self, lang, mode="cons"):
+    def __init__(self, lang, mode="cons", hbs=False):
         assert (mode=="cons" or mode=="aggr"), "Unknown mode. Use 'aggr' for aggressive or 'cons' for conservative"
 
         self.lang = lang
         self.mode = mode
+        self.hbs = hbs
         
         ft_model_path = os.path.join(self.cur_path, "lid.176.bin") #The model should be in the same directory
         
@@ -120,6 +122,11 @@ class FastSpell:
         
         sent=sent.replace("\n", " ").strip()
         prediction = self.model.predict(sent, k=1)[0][0][len(self.prefix):]
+
+        # Return 'hbs' for all serbo-croatian variants
+        if self.hbs and prediction in ('sh', 'bs', 'sr', 'hr', 'me'):
+            return 'hbs'
+
         #classic norwegian ñapa
         if prediction == "no":
             prediction = "nb"
