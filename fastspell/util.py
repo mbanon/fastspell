@@ -1,3 +1,4 @@
+from string import punctuation
 import logging
 import hashlib
 import sys

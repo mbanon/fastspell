@@ -12,7 +12,6 @@ import timeit
 import argparse
 import traceback
 import logging
-from string import punctuation
 
 try:
     from .util import logging_setup, remove_unwanted_words, get_hash
