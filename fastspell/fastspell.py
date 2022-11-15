@@ -151,7 +151,8 @@ class FastSpell:
         prediction = self.model.predict(sent, k=1)[0][0][len(self.prefix):]
 
         # Return 'hbs' for all serbo-croatian variants
-        if self.hbs and prediction in HBS_LANGS:
+        # if hbs mode is enabled or hbs is the requested language
+        if (self.hbs or self.lang == 'hbs') and prediction in HBS_LANGS:
             if self.script:
                 return self.getscript(sent)
             return 'hbs'
