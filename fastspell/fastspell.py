@@ -23,6 +23,7 @@ __version__ = "Version 0.1 # 01/07/2021 # Initial release # Marta Bañón"
 __version__ = "Version 0.1.1 # 01/07/2021 # More flexible management of paths and imports # Marta Bañón"
 __version__ = "Version 0.2 # 25/10/2021 # Removed tokenization # Marta Bañón"
 __version__ = "Version 0.3 # 14/11/2022 # Serbo-Croatian mode # Jaume Zaragoza"
+__version__ = "Version 0.4 # 15/11/2022 # Serbo-Croatian script detection # Jaume Zaragoza"
 
 fasttext.FastText.eprint = lambda x: None
 
