@@ -15,8 +15,6 @@ def logging_setup(args = None):
     h.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
     logger.addHandler(h)
 
-    logger.setLevel(logging.INFO)
-    
     if args != None:
         if not args.quiet:
             logger.setLevel(logging.INFO)
