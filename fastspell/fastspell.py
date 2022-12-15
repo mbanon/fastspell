@@ -112,6 +112,7 @@ class FastSpell:
         #If there are languages that can be mistaken 
         #with the target language: prepare an array of Hunspell spellcheckers
         #for all the similar languages
+        logging.debug(f"Similar list for '{lang}': {self.similar}")
         if self.similar != None:            
             for l in self.similar:
                 #load dicts
@@ -119,6 +120,7 @@ class FastSpell:
                     dict = self.dictpath + '/' + self.hunspell_codes.get(l)
                     hunspell_obj = hunspell.HunSpell(dict+'.dic', dict+'.aff') 
                     self.hunspell_objs[l] = hunspell_obj
+                    logging.debug(f"Loaded hunspell obj for '{l}' in path: {dict}")
                 except hunspell.HunSpellError:
                     logging.error("Failed building Hunspell object for "+l)
                     logging.error("Please check that " + dict+".dic" + " and " + dict+'.aff' + " do exist.")
@@ -128,17 +130,22 @@ class FastSpell:
         # Crate translate tables for script detection
         if script:
             self.script_tables = {
-                'hbs_lat': str.maketrans('', '', 'aAbBcčČćĆdDđĐeEfFgGhHiIjJkKlLmMnNoOpPrRsSšŠtuUvVzZžŽ'),
-                'hbs_cyr': str.maketrans('', '', 'АаБбВвГгДддЂђЕеЖжЗзИиЙйКкkЛлЉљМмНнЊњОоПпРрЋћТтУуФфХхЦцЧчШшЩщ'),
+                "hbs": {
+                    'hbs_lat': str.maketrans('', '',
+                        'aAbBcčČćĆdDđĐeEfFgGhHiIjJkKlLmMnNoOpPrRsSšŠtuUvVzZžŽ'),
+                    'hbs_cyr': str.maketrans('', '',
+                        'АаБбВвГгДддЂђЕеЖжЗзИиЙйКкkЛлЉљМмНнЊњОоПпРрЋћТтУуФфХхЦцЧчШшЩщ'),
+                },
             }
 
-    def getscript(self, sent):
+    def getscript(self, sent, lang):
         # Return as detected script the one that its translate table
         # deletes more characters
+        script_tables = self.script_tables[lang] # grab script tables of the requested lang
         best_count = sys.maxsize
         best_script = None
-        for script in self.script_tables.keys():
-            count_chars = len(sent.translate(self.script_tables[script]))
+        for script in script_tables.keys():
+            count_chars = len(sent.translate(script_tables[script]))
             if count_chars < best_count:
                 best_count = count_chars
                 best_script = script
@@ -147,29 +154,26 @@ class FastSpell:
 
 
     def getlang(self, sent):
-        
         sent=sent.replace("\n", " ").strip()
         prediction = self.model.predict(sent, k=1)[0][0][len(self.prefix):]
 
         # Return 'hbs' for all serbo-croatian variants
         # if hbs mode is enabled or hbs is the requested language
         if (self.hbs or self.lang == 'hbs') and prediction in HBS_LANGS:
-            if self.script:
-                return self.getscript(sent)
-            return 'hbs'
+            prediction = 'hbs'
 
-        #classic norwegian ñapa
+        # If prediction does not specify the with variant
+        # replace it by any of the variants to trigger hunspell refinement
         if prediction == "no":
             prediction = "nb"
-        #New serbo-croatian ñapa    
         if prediction == "sh":
             prediction = "sr"
-            
+
         #TODO: Confidence score?
 
         if self.similar == None or prediction not in self.similar:
         #Non mistakeable language: just return FastText prediction
-            return(prediction)
+            refined_prediction = prediction
         else:
         #The target language is mistakeable
             spellchecked = {}
@@ -203,28 +207,36 @@ class FastSpell:
                 best_keys = [k for k, v in spellchecked.items() if v == best_value]
                 if len(best_keys)==1:
                     #Only one language scoring the best
-                    return(best_keys[0])
+                    refined_prediction = best_keys[0]
                 else:
                     #It's a tie!
                     if self.mode == "aggr":
                         #Aggressive approach: if the targetted language is among the best scoring, take it
                         if self.lang in best_keys:
-                            return(self.lang)
+                            refined_prediction = self.lang
                         elif prediction in best_keys:
                             #the targetted language is not in the best ones, and the prediction?
-                            return(prediction)
+                            refined_prediction = prediction
                         else:
                             #Just take one
-                            return(best_keys[0])
+                            refined_prediction = best_keys[0]
                     if self.mode == "cons":
                         #Conservative: just keep it as unknown
-                        return("unk")
+                        refined_prediction = "unk"
             else:
                 #Nothing in the spellchecking list
                 if self.mode == "aggr":
-                    return(prediction)
+                    refined_prediction = prediction
                 else:
-                    return("unk")
+                    refined_prediction = "unk"
+
+        # If script detection is supported for the lang, and requested
+        # append detected script to the prediction
+        if self.script and refined_prediction in self.script_tables:
+            return self.getscript(sent, refined_prediction)
+        else:
+            return refined_prediction
+
 
 def perform_identification(args):
     time_start = timeit.default_timer()
