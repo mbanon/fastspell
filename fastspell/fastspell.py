@@ -116,7 +116,7 @@ class FastSpell:
             for l in self.similar:
                 #load dicts
                 try:
-                    dict = self.dictpath+self.hunspell_codes.get(l)
+                    dict = self.dictpath + '/' + self.hunspell_codes.get(l)
                     hunspell_obj = hunspell.HunSpell(dict+'.dic', dict+'.aff') 
                     self.hunspell_objs[l] = hunspell_obj
                 except hunspell.HunSpellError:
