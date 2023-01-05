@@ -107,14 +107,21 @@ class FastSpell:
             urllib.request.urlretrieve("https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.bin", ft_model_path)
             self.model = fasttext.load_model(ft_model_path) 
 
-        self.similar = self.similar_langs.get(lang)
+        # Obtain all the possible lists for the given lang
+        # a.k.a the list for each script of the lang
+        self.similar = []
+        for sim_entry in self.similar_langs:
+            if sim_entry.split('_')[0] == lang:
+                self.similar.append(self.similar_langs[sim_entry])
 
         #If there are languages that can be mistaken 
         #with the target language: prepare an array of Hunspell spellcheckers
         #for all the similar languages
-        logging.debug(f"Similar list for '{lang}': {self.similar}")
-        if self.similar != None:            
-            for l in self.similar:
+        logging.debug(f"Similar lists for '{lang}': {self.similar}")
+        for similar_list in self.similar:
+            for l in similar_list:
+                if l in self.hunspell_objs:
+                    continue # Avoid loading one dic twice
                 #load dicts
                 try:
                     dict = self.dictpath + '/' + self.hunspell_codes.get(l)
@@ -126,17 +133,24 @@ class FastSpell:
                     logging.error("Please check that " + dict+".dic" + " and " + dict+'.aff' + " do exist.")
                     logging.error("Aborting.") 
                     exit(1)
+        # The code above will load for this similar.yaml:
+        # hbs_lat: [hbs_lat, sl]
+        # hbs_cyr: [hbs_cyr, ru, mk, bg]
+        # the subsequent list of hunspell objs:
+        # hunspell_objs = [hbs_lat, sl, hbs_cyr, ru, mk, bg]
 
         # Crate translate tables for script detection
-        if script:
-            self.script_tables = {
-                "hbs": {
-                    'hbs_lat': str.maketrans('', '',
-                        'aAbBcčČćĆdDđĐeEfFgGhHiIjJkKlLmMnNoOpPrRsSšŠtuUvVzZžŽ'),
-                    'hbs_cyr': str.maketrans('', '',
-                        'АаБбВвГгДддЂђЕеЖжЗзИиЙйКкkЛлЉљМмНнЊњОоПпРрЋћТтУуФфХхЦцЧчШшЩщ'),
-                },
-            }
+        self.script_tables = {
+            "hbs": {
+                # Combination of Gaj's alphabet and Montenegrin Latin
+                # plus unicode chars of double letters
+                'hbs_lat': str.maketrans('', '',
+                    'aAbBcčČćĆdDđĐeEfFgGhHiIjJkKlLmMnNoOpPrRsSšŠŚśtuUvVzZžŽŹźﬁﬂﬆĳœǌ'),
+                # Combination of Serbian Cyrillic and Montenegrin Cyrillic
+                'hbs_cyr': str.maketrans('', '',
+                    'АаБбВвГгДддЂђЕеЖжЗзЗ́з́ИиКкkЛлЉљМмНнЊњОоПпРрСсС́с́ЋћТтУуФфХхЦцЧчШшЩщҵҥӕ'),
+            },
+        }
 
     def getscript(self, sent, lang):
         # Return as detected script the one that its translate table
@@ -169,15 +183,27 @@ class FastSpell:
         if prediction == "sh":
             prediction = "sr"
 
+        # Always detect script if supported (will be printed only if requested)
+        script = ''
+        if prediction in self.script_tables:
+            prediction = self.getscript(sent, prediction)
+            logging.debug(f"Detected script {prediction}")
+
         #TODO: Confidence score?
 
-        if self.similar == None or prediction not in self.similar:
+        if self.similar == [] or prediction not in self.hunspell_objs:
         #Non mistakeable language: just return FastText prediction
             refined_prediction = prediction
         else:
         #The target language is mistakeable
+            # Obtain the list of languages to spellcheck, only similar for the current lang and script
+            current_similar = None
+            for sim_list in self.similar:
+                if prediction in sim_list or f'{prediction}_{script}' in sim_list:
+                    current_similar = sim_list
+
             spellchecked = {}
-            for l in self.hunspell_objs:
+            for l in current_similar:
                 #Get spellchecking for all the mistakeable languages
                 logging.debug(l)
                 dec_sent = sent.encode(encoding='UTF-8',errors='strict').decode('UTF-8') #Not 100% sure about this...
@@ -200,6 +226,7 @@ class FastSpell:
                     spellchecked[l] =  error_rate
                 logging.debug("----------------")
 
+            logging.debug(f"Spellchecked: {spellchecked}")
             if len(spellchecked) > 0:
                 #at least one of the spellchecks was below the threshold            
                 #get best values and keys
@@ -230,12 +257,12 @@ class FastSpell:
                 else:
                     refined_prediction = "unk"
 
-        # If script detection is supported for the lang, and requested
-        # append detected script to the prediction
-        if self.script and refined_prediction in self.script_tables:
-            return self.getscript(sent, refined_prediction)
-        else:
+        # If script detection not requested
+        # remove it from prediction
+        if self.script:
             return refined_prediction
+        else:
+            return refined_prediction.split('_')[0]
 
 
 def perform_identification(args):
@@ -248,7 +275,7 @@ def perform_identification(args):
     fs = FastSpell(args.lang, mode=mode, hbs=args.hbs, script=args.script)
     
     for line in args.input:        
-        lident = fs.getlang(line)
+        lident = fs.getlang(line.lower())
         args.output.write(line.strip()+"\t"+lident+"\n")
         
     end_time = timeit.default_timer()

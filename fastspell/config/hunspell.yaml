@@ -16,10 +16,12 @@ hunspell_codes:
     me: sr_ME
     mk: mk_MK
     sq: sq_AL
-    sr: sr_Latn_RS
+    sr: sr_RS
     sl: sl_SI
     es: es_ES
     pt: pt_PT
     nl: nl_NL
     af: af_ZA
-    hbs: sr_Latn_RS
+    hbs_lat: hr_HR
+    hbs_cyr: sr_RS
+    ru: ru_RU

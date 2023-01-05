@@ -15,5 +15,6 @@ similar:
     nn: [nb, da, nn]
     sk: [cs, sk]
     sr: [bs, hr, me, sr, sl]
-    hbs: [hbs, sl] # We have enough with latin hbs because it won't be mixed up with Slovene
-    sl: [hbs, sl]
+    hbs_lat: [hbs_lat, sl]
+    hbs_cyr: [hbs_cyr, ru, mk, bg]
+    sl: [hbs_lat, sl]
