@@ -2,3 +2,4 @@ dist/
 build/
 fastspell.egg-info/
 fastspell/__pycache__/
+*.swp
