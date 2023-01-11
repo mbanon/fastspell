@@ -169,7 +169,7 @@ class FastSpell:
 
     def getlang(self, sent):
         sent=sent.replace("\n", " ").strip()
-        prediction = self.model.predict(sent, k=1)[0][0][len(self.prefix):]
+        prediction = self.model.predict(sent.lower(), k=1)[0][0][len(self.prefix):]
 
         # Return 'hbs' for all serbo-croatian variants
         # if hbs mode is enabled or hbs is the requested language
@@ -275,7 +275,7 @@ def perform_identification(args):
     fs = FastSpell(args.lang, mode=mode, hbs=args.hbs, script=args.script)
     
     for line in args.input:        
-        lident = fs.getlang(line.lower())
+        lident = fs.getlang(line)
         args.output.write(line.strip()+"\t"+lident+"\n")
         
     end_time = timeit.default_timer()
