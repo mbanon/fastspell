@@ -85,6 +85,7 @@ class FastSpell:
                 config_path = None
 
         self.cur_path = os.path.dirname(__file__)
+        self.download_fasttext()
         self.load_config(config_path)
         self.load_scripts()
         self.load_hunspell_dicts()
