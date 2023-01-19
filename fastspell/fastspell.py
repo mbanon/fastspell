@@ -127,7 +127,7 @@ class FastSpell:
             hunspell_paths.append(os.path.expandvars("$VIRTUAL_ENV/share/hunspell"))
         if "/usr/share/hunspell" not in hunspell_paths:
             hunspell_paths.append("/usr/share/hunspell")
-        logging.debug("Paths to search for hunspell directories {hunspell_paths}")
+        logging.debug(f"Paths to search for hunspell directories {hunspell_paths}")
 
         self.hunspell_paths = hunspell_paths
 
