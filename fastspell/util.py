@@ -1,7 +1,9 @@
 from string import punctuation
+from argparse import ArgumentTypeError
 import logging
 import hashlib
 import sys
+import os
 
 def logging_setup(args = None):
     logger = logging.getLogger()
@@ -50,3 +52,16 @@ def get_hash(filepath):
     except FileNotFoundError:
         return None
 
+def check_dir(path):
+    if not os.path.exists(path):
+        raise ArgumentTypeError(f"{path} does not exist")
+    if not os.path.isdir(path):
+        raise ArgumentTypeError(f"{path} is not a directory")
+    return path
+
+def check_file(path):
+    if not os.path.exists(path):
+        raise ArgumentTypeError(f"{path} does not exist")
+    if not os.path.isfile(path):
+        raise ArgumentTypeError(f"{path} is not a file")
+    return path
