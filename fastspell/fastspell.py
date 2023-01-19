@@ -61,33 +61,12 @@ def initialization():
     return args
 
 class FastSpell:
-    
+
     threshold = 0.25 #Hunspell max error rate allowed in a sentence
     prefix = "__label__" #FastText returns langs labeled as __label__LANGCODE
     ft_model_hash = "01810bc59c6a3d2b79c79e6336612f65"
-    
-    #load config
-    cur_path = os.path.dirname(__file__)
-    config_path = cur_path + "/config/"
-    #similar languages
-    similar_yaml_file = open(config_path+"similar.yaml")
-    similar_langs = yaml.safe_load(similar_yaml_file)["similar"]
+    ft_download_url = "https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.bin"
 
-
-    #hunspell 
-    hunspell_codes_file = open(config_path+"hunspell.yaml")
-    hunspell_config = yaml.safe_load(hunspell_codes_file) 
-    hunspell_codes = hunspell_config["hunspell_codes"]
-    if os.path.isabs(hunspell_config["dictpath"]):
-        dictpath = hunspell_config["dictpath"]
-    else:    
-        dictpath = os.path.join(config_path, hunspell_config["dictpath"])
-
-
- 
-    hunspell_objs = {}
-
-    #tokenizers={}
 
     def __init__(self, lang, mode="cons", hbs=False, script=False):
         assert (mode=="cons" or mode=="aggr"), "Unknown mode. Use 'aggr' for aggressive or 'cons' for conservative"
@@ -96,28 +75,61 @@ class FastSpell:
         self.mode = mode
         self.hbs = hbs
         self.script = script
-        
+
+        self.cur_path = os.path.dirname(__file__)
+        self.load_config()
+        self.load_scripts()
+        self.load_hunspell_dicts()
+
+
+    def download_fasttext(self):
+        ''' Download and check integrity of FastText model '''
         ft_model_path = os.path.join(self.cur_path, "lid.176.bin") #The model should be in the same directory
-        
         hash = get_hash(ft_model_path)
         if hash == self.ft_model_hash:
             self.model = fasttext.load_model(ft_model_path)  #FastText model
         else:
             logging.warning("Downloading FastText model...")
-            urllib.request.urlretrieve("https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.bin", ft_model_path)
-            self.model = fasttext.load_model(ft_model_path) 
+            urllib.request.urlretrieve(ft_download_url, ft_model_path)
+            self.model = fasttext.load_model(ft_model_path)
+
+
+    def load_config(self):
+        ''' Load FastSpell yaml config files: similar langs and hunspell dicts '''
+        config_path = self.cur_path + "/config/"
+        #similar languages
+        similar_yaml_file = open(config_path+"similar.yaml")
+        self.similar_langs = yaml.safe_load(similar_yaml_file)["similar"]
+
+        #hunspell
+        hunspell_codes_file = open(config_path+"hunspell.yaml")
+        hunspell_config = yaml.safe_load(hunspell_codes_file) 
+        self.hunspell_codes = hunspell_config["hunspell_codes"]
+        if os.path.isabs(hunspell_config["dictpath"]):
+            self.dictpath = hunspell_config["dictpath"]
+        else:
+            self.dictpath = os.path.join(config_path, hunspell_config["dictpath"])
+
+
+    def load_hunspell_dicts(self):
+        #If there are languages that can be mistaken 
+        #with the target language: prepare an array of Hunspell spellcheckers
+        #for all the similar languages
+        # The function will load for this similar.yaml:
+        # hbs_lat: [hbs_lat, sl]
+        # hbs_cyr: [hbs_cyr, ru, mk, bg]
+        # the subsequent list of hunspell objs:
+        # hunspell_objs = [hbs_lat, sl, hbs_cyr, ru, mk, bg]
 
         # Obtain all the possible lists for the given lang
         # a.k.a the list for each script of the lang
         self.similar = []
         for sim_entry in self.similar_langs:
-            if sim_entry.split('_')[0] == lang:
+            if sim_entry.split('_')[0] == self.lang:
                 self.similar.append(self.similar_langs[sim_entry])
 
-        #If there are languages that can be mistaken 
-        #with the target language: prepare an array of Hunspell spellcheckers
-        #for all the similar languages
-        logging.debug(f"Similar lists for '{lang}': {self.similar}")
+        logging.debug(f"Similar lists for '{self.lang}': {self.similar}")
+        self.hunspell_objs = {}
         for similar_list in self.similar:
             for l in similar_list:
                 if l in self.hunspell_objs:
@@ -133,12 +145,9 @@ class FastSpell:
                     logging.error("Please check that " + dict+".dic" + " and " + dict+'.aff' + " do exist.")
                     logging.error("Aborting.") 
                     exit(1)
-        # The code above will load for this similar.yaml:
-        # hbs_lat: [hbs_lat, sl]
-        # hbs_cyr: [hbs_cyr, ru, mk, bg]
-        # the subsequent list of hunspell objs:
-        # hunspell_objs = [hbs_lat, sl, hbs_cyr, ru, mk, bg]
 
+
+    def load_scripts(self):
         # Crate translate tables for script detection
         self.script_tables = {
             "hbs": {
@@ -151,6 +160,7 @@ class FastSpell:
                     'АаБбВвГгДддЂђЕеЖжЗзЗ́з́ИиКкkЛлЉљМмНнЊњОоПпРрСсС́с́ЋћТтУуФфХхЦцЧчШшЩщҵҥӕ'),
             },
         }
+
 
     def getscript(self, sent, lang):
         # Return as detected script the one that its translate table
