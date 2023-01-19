@@ -115,9 +115,40 @@ class FastSpell:
         hunspell_config = yaml.safe_load(hunspell_codes_file) 
         self.hunspell_codes = hunspell_config["hunspell_codes"]
         if os.path.isabs(hunspell_config["dictpath"]):
-            self.dictpath = hunspell_config["dictpath"]
+            config_dictpath = hunspell_config["dictpath"]
         else:
-            self.dictpath = os.path.join(config_path, hunspell_config["dictpath"])
+            config_dictpath = os.path.join(config_path, hunspell_config["dictpath"])
+
+        # Paths to search for dictionaries
+        hunspell_paths = [config_dictpath]
+        if "HOME" in os.environ:
+            hunspell_paths.append(os.path.expanduser("~/.local/share/hunspell"))
+        if "VIRTUAL_ENV" in os.environ:
+            hunspell_paths.append(os.path.expandvars("$VIRTUAL_ENV/share/hunspell"))
+        if "/usr/share/hunspell" not in hunspell_paths:
+            hunspell_paths.append("/usr/share/hunspell")
+        logging.debug("Paths to search for hunspell directories {hunspell_paths}")
+
+        self.hunspell_paths = hunspell_paths
+
+
+    def search_hunspell_dict(self, lang_code):
+        ''' Search in the paths for a hunspell dictionary and load it '''
+        for p in self.hunspell_paths:
+            if os.path.exists(f"{p}/{lang_code}.dic") and os.path.exists(f"{p}/{lang_code}.aff"):
+                try:
+                    dicpath = p + '/' + lang_code
+                    hunspell_obj = hunspell.HunSpell(f"{dicpath}.dic", f"{dicpath}.aff")
+                    logging.debug(f"Loaded hunspell obj for '{lang_code}' in path: {dicpath}")
+                    break
+                except hunspell.HunSpellError:
+                    logging.error("Failed building Hunspell object for " + lang_code)
+                    logging.error("Aborting.")
+                    exit(1)
+        else:
+            raise RuntimeError(f"It does not exist any valid dictionary directory"
+                               f"for {lang_code} in the paths {self.hunspell_paths}")
+        return hunspell_obj
 
 
     def load_hunspell_dicts(self):
@@ -144,16 +175,8 @@ class FastSpell:
                 if l in self.hunspell_objs:
                     continue # Avoid loading one dic twice
                 #load dicts
-                try:
-                    dict = self.dictpath + '/' + self.hunspell_codes.get(l)
-                    hunspell_obj = hunspell.HunSpell(dict+'.dic', dict+'.aff') 
-                    self.hunspell_objs[l] = hunspell_obj
-                    logging.debug(f"Loaded hunspell obj for '{l}' in path: {dict}")
-                except hunspell.HunSpellError:
-                    logging.error("Failed building Hunspell object for "+l)
-                    logging.error("Please check that " + dict+".dic" + " and " + dict+'.aff' + " do exist.")
-                    logging.error("Aborting.")
-                    exit(1)
+                logging.debug(f"Loading dictionary for {l}")
+                self.hunspell_objs[l] = self.search_hunspell_dict(self.hunspell_codes[l])
 
 
     def load_scripts(self):
