@@ -2,7 +2,6 @@
 import os
 import io
 import sys
-import yaml
 import fasttext
 import hunspell
 import logging
@@ -14,9 +13,9 @@ import traceback
 import logging
 
 try:
-    from .util import logging_setup, remove_unwanted_words, get_hash, check_dir
+    from .util import logging_setup, remove_unwanted_words, get_hash, check_dir, load_config
 except ImportError:
-    from util import logging_setup, remove_unwanted_words, get_hash, check_dir
+    from util import logging_setup, remove_unwanted_words, get_hash, check_dir, load_config
 
 __author__ = "Marta Bañón"
 __version__ = "Version 0.1 # 01/07/2021 # Initial release # Marta Bañón"
@@ -69,7 +68,7 @@ class FastSpell:
     ft_download_url = "https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.bin"
 
 
-    def __init__(self, lang, config_path=None,
+    def __init__(self, lang, config_path=None, download_dics=False,
                  mode="cons", hbs=False, script=False):
         assert (mode=="cons" or mode=="aggr"), "Unknown mode. Use 'aggr' for aggressive or 'cons' for conservative"
 
@@ -78,15 +77,10 @@ class FastSpell:
         self.hbs = hbs
         self.script = script
 
-        if not config_path and "FASTSPELL_CONFIG" in os.environ:
-            config_path = os.environ["FASTSPELL_CONFIG"]
-            if not os.path.isdir(config_path):
-                logging.warning("$FASTSPELL_CONFIG is not a valid path, using default")
-                config_path = None
-
         self.cur_path = os.path.dirname(__file__)
         self.download_fasttext()
-        self.load_config(config_path)
+        config = load_config(config_path)
+        self.similar_langs, self.hunspell_codes, self.hunspell_paths = config
         self.load_scripts()
         self.load_hunspell_dicts()
 
@@ -102,35 +96,6 @@ class FastSpell:
             urllib.request.urlretrieve(ft_download_url, ft_model_path)
             self.model = fasttext.load_model(ft_model_path)
 
-
-    def load_config(self, config_path=None):
-        ''' Load FastSpell yaml config files: similar langs and hunspell dicts '''
-        if not config_path:
-            config_path = self.cur_path + "/config"
-        #similar languages
-        similar_yaml_file = open(config_path+"/similar.yaml")
-        self.similar_langs = yaml.safe_load(similar_yaml_file)["similar"]
-
-        #hunspell
-        hunspell_codes_file = open(config_path+"/hunspell.yaml")
-        hunspell_config = yaml.safe_load(hunspell_codes_file) 
-        self.hunspell_codes = hunspell_config["hunspell_codes"]
-        if os.path.isabs(hunspell_config["dictpath"]):
-            config_dictpath = hunspell_config["dictpath"]
-        else:
-            config_dictpath = os.path.join(config_path, hunspell_config["dictpath"])
-
-        # Paths to search for dictionaries
-        hunspell_paths = [config_dictpath]
-        if "HOME" in os.environ:
-            hunspell_paths.append(os.path.expanduser("~/.local/share/hunspell"))
-        if "VIRTUAL_ENV" in os.environ:
-            hunspell_paths.append(os.path.expandvars("$VIRTUAL_ENV/share/hunspell"))
-        if "/usr/share/hunspell" not in hunspell_paths:
-            hunspell_paths.append("/usr/share/hunspell")
-        logging.debug(f"Paths to search for hunspell directories {hunspell_paths}")
-
-        self.hunspell_paths = hunspell_paths
 
 
     def search_hunspell_dict(self, lang_code):
