@@ -16,7 +16,7 @@ try:
     from . import __version__
     from .util import logging_setup, remove_unwanted_words, get_hash, check_dir, load_config
 except ImportError:
-    from fastspell import __version
+    from fastspell import __version__
     from util import logging_setup, remove_unwanted_words, get_hash, check_dir, load_config
 
 fasttext.FastText.eprint = lambda x: None
