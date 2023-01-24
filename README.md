@@ -59,7 +59,7 @@ If you need to change default configuration, you can provide the path to your co
 
 In this dictionary-like file, similar languages are stored. These are the languages that are going to be "double-checked" with Hunspell after being identified with FastText. For example, see the line `gl: [es, pt, gl] `. This means that, when the targetted language is Galician, and FastText identifies a given sentence as Spanish, Portuguese or Galician, extra checks will be performed with Hunspell to confirm which of the three similar languages is more suitable for the sentence.
 
-Please note that you need Hunspell dictionaries for all the languages in this file (if you use the download command, this is handled for you). This file can be modified to remove a language you are not interested in, or a language for which you don't have Hunspell dictionaries, or to add new similar or target languages.
+Please note that you need Hunspell dictionaries for all the languages in this file (if you use the `fastspell-download` command, there is nothing else to do). This file can be modified to remove a language you are not interested in, or a language for which you don't have Hunspell dictionaries, or to add new similar or target languages.
 
 #### hunspell.yaml
 
