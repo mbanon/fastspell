@@ -46,7 +46,7 @@ Homepage = "https://github.com/mbanon/fastspell"
 "FastSpell on GitHub" = "https://github.com/mbanon/fastspell"
 "Prompsit Language Engineering" = "http://www.prompsit.com"
 Paracrawl = "https://paracrawl.eu/"
-MaCoCu = "https://paracrawl.eu"
+MaCoCu = "https://macocu.eu"
 
 [build-system]
 requires = [ "setuptools>=61.2",]
