@@ -93,9 +93,8 @@ class FastSpell:
             self.model = fasttext.load_model(ft_model_path)  #FastText model
         else:
             logging.warning("Downloading FastText model...")
-            urllib.request.urlretrieve(ft_download_url, ft_model_path)
+            urllib.request.urlretrieve(self.ft_download_url, ft_model_path)
             self.model = fasttext.load_model(ft_model_path)
-
 
 
     def search_hunspell_dict(self, lang_code):
