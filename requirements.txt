@@ -1,5 +1,0 @@
-fasttext
-hunspell
-sacremoses
-urllib3
-PyYAML
