@@ -13,25 +13,26 @@ If the language detected is very similar to the target language (i.e. FastText d
 
 **FastSpell** can be installed from PyPI
 ```
-python3.7 -m pip install fastspell
+pip install fastspell
 ```
 or directly from source:
 ```
-python3.7 setup.py install
+pip install .
 ```
 Note that **Hunspell** requires `python-dev` and `libhunspell-dev`:
 
 ```
 sudo apt-get install python-dev libhunspell-dev
-``` 
-Also note that Hunspell language packages must be installed by hand, i.e.:
 ```
-sudo apt-get install hunspell-es
+
+Before running FastSpell for any of the languages listed as [similar](https://github.com/mbanon/fastspell/blob/main/fastspell/config/similar.yaml), you must have all the [needed Hunspell dictionaries](https://github.com/mbanon/fastspell/blob/main/fastspell/config/hunspell.yaml) for that language.
+For further explanation about how configuration works, [see below](#configuration).
+You can use the `fastspell-download` command to download all the needed files for the default configuration, just run it without arguments:
 ```
-or downloaded from an external source, such as https://github.com/wooorm/dictionaries/tree/main/dictionaries 
+fastspell-download
+```
 
-You can also provide the path to the Hunspell dictionaries directories by using the dictpath atribute in `{/YOUR/INSTALLATION/PATH}/config/hunspell.yaml` (for example, `venv/lib/python3.7/site-packages/fastspell/config/hunspell.yaml` ) if you are installing from PyPI or with `setup.py`, or in `/config/hunspell.yaml` if you are running directly the code. Default path is `/usr/share/hunspell`.
-
+### Conda
 Also, you can install the conda package:
 ```
 conda install -c conda-forge -c bitextor fastspell
@@ -49,21 +50,32 @@ If you found an installation error during `pip install hunspell` that says `/usr
 sudo ln -s /usr/lib64/libhunspell-1.7.so /usr/lib64/libhunspell.so
 ```
 
-### Configuration
+## Configuration
 
-A few configuration files are provided under the `/config` directory.
+A few configuration files are provided under the `fastspell/config` directory.
+If you need to change default configuration, you can provide the path to your config directory with `-c`/`--config` or with the environment variable `FASTSPELL_CONFIG`.
 
 #### similar.yaml
 
 In this dictionary-like file, similar languages are stored. These are the languages that are going to be "double-checked" with Hunspell after being identified with FastText. For example, see the line `gl: [es, pt, gl] `. This means that, when the targetted language is Galician, and FastText identifies a given sentence as Spanish, Portuguese or Galician, extra checks will be performed with Hunspell to confirm which of the three similar languages is more suitable for the sentence.
 
-Please note that you need Hunspell dictionaries for all languages in this file. This file can be modified to remove a language you are not interested in, or a language for which you don't have Hunspell dictionaries, or to add new similar or target languages.
+Please note that you need Hunspell dictionaries for all the languages in this file (if you use the `fastspell-download` command, there is nothing else to do). This file can be modified to remove a language you are not interested in, or a language for which you don't have Hunspell dictionaries, or to add new similar or target languages.
 
 #### hunspell.yaml
 
-In this file, both the path to Hunspell dictionary files  (default: `dictpath: /usr/share/hunspell/`) and the names of such dictionaries are stored. All similar languages must be in this list in order to properly work.
+In this file, the names of the dictionaries are stored. All similar languages must be in this list in order to properly work.
 
-For example, the first entry in the `hunspell_codes` is ` ca: ca_ES`, and the dictionary path is `/usr/share/hunspell/`. That means that the Hunspell files for Catalan are  `/usr/share/hunspell/ca_ES.dic` and `/usr/share/hunspell/ca_ES.aff`.
+For example, the first entry in the `hunspell_codes` is ` ca: ca_ES`, and the dictionary path is `~/.local/share/fastspell/`. That means that the Hunspell files for Catalan are  `~/.local/share/fastspell/ca_ES.dic` and `~/.local/share/fastspell/ca_ES.aff`.
+
+By default `dicpath` is empty, which means FastSpell will look in these directories for the dictionaries:
+```
+~/.local/share/fastspell
+~/.local/share/hunspell
+$VIRTUAL_ENV/share/hunspell
+/usr/share/hunspell
+```
+To use a custom path, put it in `dicpath` and will be the first one to search.
+
 
 ## Usage
 
@@ -144,8 +156,8 @@ Quen pode solicitar o dito financiamento?
 ```
 Command:
 ```
-python3.7 fastspell $L --aggr inputtext
-python3.7 fastspell $L --cons inputtext
+fastspell $L --aggr inputtext
+fastspell $L --cons inputtext
 ```
 Aggressive output:
 ```
@@ -176,8 +188,8 @@ Quen pode solicitar o dito financiamento?       gl
 ```
 Getting stats:
 ```
-cat inputtext | python3.7 fastspell $L --aggr | cut -f2 | sort | uniq -c | sort -nr
-cat inputtext | python3.7 fastspell $L --cons | cut -f2 | sort | uniq -c | sort -nr
+cat inputtext | fastspell $L --aggr | cut -f2 | sort | uniq -c | sort -nr
+cat inputtext | fastspell $L --cons | cut -f2 | sort | uniq -c | sort -nr
 ```
 Aggressive:
 ```

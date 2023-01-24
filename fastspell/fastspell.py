@@ -2,7 +2,6 @@
 import os
 import io
 import sys
-import yaml
 import fasttext
 import hunspell
 import logging
@@ -14,9 +13,9 @@ import traceback
 import logging
 
 try:
-    from .util import logging_setup, remove_unwanted_words, get_hash
+    from .util import logging_setup, remove_unwanted_words, get_hash, check_dir, load_config
 except ImportError:
-    from util import logging_setup, remove_unwanted_words, get_hash
+    from util import logging_setup, remove_unwanted_words, get_hash, check_dir, load_config
 
 __author__ = "Marta Bañón"
 __version__ = "Version 0.1 # 01/07/2021 # Initial release # Marta Bañón"
@@ -35,21 +34,22 @@ def initialization():
     parser.add_argument('lang', type=str)
     parser.add_argument('input',  nargs='?', type=argparse.FileType('rt', errors="replace"), default=io.TextIOWrapper(sys.stdin.buffer, errors="replace"),  help="Input sentences.")
     parser.add_argument('output', nargs='?', type=argparse.FileType('wt'), default=sys.stdout, help="Output of the language identification.")
-    
+
+    parser.add_argument('-c', '--config_path', default=None, type=check_dir, help="Alternative config path. Must contain 'hunspell.yaml' and 'similar.yaml'.")
     parser.add_argument('--aggr', action='store_true', help='Aggressive strategy (more positives)')
     parser.add_argument('--cons', action='store_true',  help='Conservative strategy (less positives)')
     parser.add_argument('--hbs', action='store_true',  help="Tag all Serbo-Croatian variants as 'hbs'")
     parser.add_argument('--script', action='store_true',  help="Detect writing script (currently only Serbo-Croatian is supported)")
-    
+
     groupL = parser.add_argument_group('Logging')
     groupL.add_argument('-q', '--quiet', action='store_true', help='Silent logging mode')
     groupL.add_argument('--debug', action='store_true', help='Debug logging mode')
     groupL.add_argument('--logfile', type=argparse.FileType('a'), default=sys.stderr, help="Store log to a file")
     groupL.add_argument('-v', '--version', action='version', version="%(prog)s " + __version__, help="show version of this script and exit")
-        
+
     args = parser.parse_args()
     logging_setup(args)
-    
+
     if args.aggr == args.cons:
         #both are true or both are false
         logging.error("Please provide  --aggr or --cons")
@@ -61,84 +61,91 @@ def initialization():
     return args
 
 class FastSpell:
-    
+
     threshold = 0.25 #Hunspell max error rate allowed in a sentence
     prefix = "__label__" #FastText returns langs labeled as __label__LANGCODE
     ft_model_hash = "01810bc59c6a3d2b79c79e6336612f65"
-    
-    #load config
-    cur_path = os.path.dirname(__file__)
-    config_path = cur_path + "/config/"
-    #similar languages
-    similar_yaml_file = open(config_path+"similar.yaml")
-    similar_langs = yaml.safe_load(similar_yaml_file)["similar"]
+    ft_download_url = "https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.bin"
 
 
-    #hunspell 
-    hunspell_codes_file = open(config_path+"hunspell.yaml")
-    hunspell_config = yaml.safe_load(hunspell_codes_file) 
-    hunspell_codes = hunspell_config["hunspell_codes"]
-    if os.path.isabs(hunspell_config["dictpath"]):
-        dictpath = hunspell_config["dictpath"]
-    else:    
-        dictpath = os.path.join(config_path, hunspell_config["dictpath"])
-
-
- 
-    hunspell_objs = {}
-
-    #tokenizers={}
-
-    def __init__(self, lang, mode="cons", hbs=False, script=False):
+    def __init__(self, lang, config_path=None, download_dics=False,
+                 mode="cons", hbs=False, script=False):
         assert (mode=="cons" or mode=="aggr"), "Unknown mode. Use 'aggr' for aggressive or 'cons' for conservative"
 
         self.lang = lang
         self.mode = mode
         self.hbs = hbs
         self.script = script
-        
+
+        self.cur_path = os.path.dirname(__file__)
+        self.download_fasttext()
+        config = load_config(config_path)
+        self.similar_langs, self.hunspell_codes, self.hunspell_paths = config
+        self.load_scripts()
+        self.load_hunspell_dicts()
+
+
+    def download_fasttext(self):
+        ''' Download and check integrity of FastText model '''
         ft_model_path = os.path.join(self.cur_path, "lid.176.bin") #The model should be in the same directory
-        
         hash = get_hash(ft_model_path)
         if hash == self.ft_model_hash:
             self.model = fasttext.load_model(ft_model_path)  #FastText model
         else:
             logging.warning("Downloading FastText model...")
-            urllib.request.urlretrieve("https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.bin", ft_model_path)
-            self.model = fasttext.load_model(ft_model_path) 
+            urllib.request.urlretrieve(ft_download_url, ft_model_path)
+            self.model = fasttext.load_model(ft_model_path)
 
-        # Obtain all the possible lists for the given lang
-        # a.k.a the list for each script of the lang
-        self.similar = []
-        for sim_entry in self.similar_langs:
-            if sim_entry.split('_')[0] == lang:
-                self.similar.append(self.similar_langs[sim_entry])
 
+
+    def search_hunspell_dict(self, lang_code):
+        ''' Search in the paths for a hunspell dictionary and load it '''
+        for p in self.hunspell_paths:
+            if os.path.exists(f"{p}/{lang_code}.dic") and os.path.exists(f"{p}/{lang_code}.aff"):
+                try:
+                    dicpath = p + '/' + lang_code
+                    hunspell_obj = hunspell.HunSpell(f"{dicpath}.dic", f"{dicpath}.aff")
+                    logging.debug(f"Loaded hunspell obj for '{lang_code}' in path: {dicpath}")
+                    break
+                except hunspell.HunSpellError:
+                    logging.error("Failed building Hunspell object for " + lang_code)
+                    logging.error("Aborting.")
+                    exit(1)
+        else:
+            raise RuntimeError(f"It does not exist any valid dictionary directory"
+                               f"for {lang_code} in the paths {self.hunspell_paths}")
+        return hunspell_obj
+
+
+    def load_hunspell_dicts(self):
         #If there are languages that can be mistaken 
         #with the target language: prepare an array of Hunspell spellcheckers
         #for all the similar languages
-        logging.debug(f"Similar lists for '{lang}': {self.similar}")
-        for similar_list in self.similar:
-            for l in similar_list:
-                if l in self.hunspell_objs:
-                    continue # Avoid loading one dic twice
-                #load dicts
-                try:
-                    dict = self.dictpath + '/' + self.hunspell_codes.get(l)
-                    hunspell_obj = hunspell.HunSpell(dict+'.dic', dict+'.aff') 
-                    self.hunspell_objs[l] = hunspell_obj
-                    logging.debug(f"Loaded hunspell obj for '{l}' in path: {dict}")
-                except hunspell.HunSpellError:
-                    logging.error("Failed building Hunspell object for "+l)
-                    logging.error("Please check that " + dict+".dic" + " and " + dict+'.aff' + " do exist.")
-                    logging.error("Aborting.") 
-                    exit(1)
-        # The code above will load for this similar.yaml:
+        # The function will load for this similar.yaml:
         # hbs_lat: [hbs_lat, sl]
         # hbs_cyr: [hbs_cyr, ru, mk, bg]
         # the subsequent list of hunspell objs:
         # hunspell_objs = [hbs_lat, sl, hbs_cyr, ru, mk, bg]
 
+        # Obtain all the possible lists for the given lang
+        # a.k.a the list for each script of the lang
+        self.similar = []
+        for sim_entry in self.similar_langs:
+            if sim_entry.split('_')[0] == self.lang:
+                self.similar.append(self.similar_langs[sim_entry])
+
+        logging.debug(f"Similar lists for '{self.lang}': {self.similar}")
+        self.hunspell_objs = {}
+        for similar_list in self.similar:
+            for l in similar_list:
+                if l in self.hunspell_objs:
+                    continue # Avoid loading one dic twice
+                #load dicts
+                logging.debug(f"Loading dictionary for {l}")
+                self.hunspell_objs[l] = self.search_hunspell_dict(self.hunspell_codes[l])
+
+
+    def load_scripts(self):
         # Crate translate tables for script detection
         self.script_tables = {
             "hbs": {
@@ -151,6 +158,7 @@ class FastSpell:
                     'АаБбВвГгДддЂђЕеЖжЗзЗ́з́ИиКкkЛлЉљМмНнЊњОоПпРрСсС́с́ЋћТтУуФфХхЦцЧчШшЩщҵҥӕ'),
             },
         }
+
 
     def getscript(self, sent, lang):
         # Return as detected script the one that its translate table
@@ -271,13 +279,14 @@ def perform_identification(args):
         mode="aggr"
     if args.cons:
         mode="cons"
-        
-    fs = FastSpell(args.lang, mode=mode, hbs=args.hbs, script=args.script)
-    
-    for line in args.input:        
+
+    fs = FastSpell(args.lang, mode=mode, config_path=args.config_path,
+                   hbs=args.hbs, script=args.script)
+
+    for line in args.input:
         lident = fs.getlang(line)
         args.output.write(line.strip()+"\t"+lident+"\n")
-        
+
     end_time = timeit.default_timer()
     logging.info("Elapsed time: {}".format(end_time - time_start))
 

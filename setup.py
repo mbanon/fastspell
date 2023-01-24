@@ -44,6 +44,9 @@ if __name__=="__main__":
             "Paracrawl": "https://paracrawl.eu/"
              },
         entry_points={
-            "console_scripts": ["fastspell=fastspell.fastspell:main"],
+            "console_scripts": [
+                "fastspell=fastspell.fastspell:main",
+                "fastspell-download=fastspell.fastspell_download:main",
+            ],
         }
     )

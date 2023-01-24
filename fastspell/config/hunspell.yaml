@@ -1,5 +1,6 @@
 #Hunspell dictionaries path
-dictpath: /usr/share/hunspell
+# will look for dictionaries at ~/.local/share/fastspell if empty
+dictpath: ""
 
 #This is how hunspell files (.dic and .aff) are named in dictpath
 hunspell_codes:
