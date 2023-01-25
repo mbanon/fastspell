@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## FastSpell 0.6.1:
+### Changed:
+- Trigger fasttext download in fastspell-download command.
+
 ## FastSpell 0.6:
 ### Added:
 - Automatic download of Hunspell dictionaries.
