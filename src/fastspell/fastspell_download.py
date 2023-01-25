@@ -18,15 +18,13 @@ except ImportError:
 
 
 def download_dictionaries(dest, lang_codes: dict, force=False):
-    ''' Download dictionaries from github repo '''
+    ''' Download dictionaries from github '''
     repo_url = "https://github.com/mbanon/fastspell/releases/latest/download/fastspell_dictionaries.tgz"
 
     if not os.path.exists(dest):
         raise RuntimeError(f"Download directory '{dest}' does not exist")
 
-    #TODO Check that dictionaries exist
-    #TODO how do we do this if woorm/dictionaries does not have all that we need?
-    # it will always trigger download
+    # Check that dictionaries exist
     all_correct = True
     logging.debug("Checking existence of hunspell dictionaries.")
     for lang in lang_codes.keys():
@@ -89,6 +87,7 @@ def main():
     args = parser.parse_args()
     logging_setup(args)
 
+    # Load config from yaml files to obtain needed dictionaries
     _, hunspell_codes, hunspell_paths = load_config()
     logging.debug(hunspell_codes)
     if args.download_dir == default_dir and not os.path.exists(args.download_dir):
