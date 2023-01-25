@@ -1,6 +1,6 @@
 [project]
 name = "fastspell"
-version = "0.6"
+version = "0.6.1"
 license = {file = "LICENSE"}
 readme = "README.md"
 description = "Targetted language identifier, based on FastText and Hunspell."
