@@ -107,7 +107,8 @@ class FastSpell:
                     exit(1)
         else:
             raise RuntimeError(f"It does not exist any valid dictionary directory"
-                               f"for {lang_code} in the paths {self.hunspell_paths}")
+                               f"for {lang_code} in the paths {self.hunspell_paths}."
+                               f"Please, execute 'fastspell-download'.")
         return hunspell_obj
 
 

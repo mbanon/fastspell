@@ -10,8 +10,10 @@ import os
 from urllib import request
 
 try:
+    from . import FastSpell
     from .util import logging_setup, load_config
 except ImportError:
+    from fastspell import FastSpell
     from util import logging_setup, load_config
 
 
@@ -69,7 +71,8 @@ def download_dictionaries(dest, lang_codes: dict, force=False):
 
 
 def main():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+            description="Download Hunspell dictionaries and FastText model")
 
     default_dir = os.path.expanduser('~/.local/share/fastspell')
     parser.add_argument('download_dir', nargs='?',
@@ -91,7 +94,8 @@ def main():
     if args.download_dir == default_dir and not os.path.exists(args.download_dir):
         os.mkdir(args.download_dir)
     download_dictionaries(args.download_dir, hunspell_codes, force=args.force)
-
+    # Trigger fasttext download
+    dummy = FastSpell(lang='en', mode='aggr')
 
 if __name__ == "__main__":
     main()
