@@ -3,6 +3,7 @@
 ## FastSpell 0.6.1:
 ### Changed:
 - Trigger fasttext download in fastspell-download command.
+- Use specific github tag/release to store dictionaries.
 
 ## FastSpell 0.6:
 ### Added:

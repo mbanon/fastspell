@@ -19,7 +19,7 @@ except ImportError:
 
 def download_dictionaries(dest, lang_codes: dict, force=False):
     ''' Download dictionaries from github '''
-    repo_url = "https://github.com/mbanon/fastspell/releases/latest/download/fastspell_dictionaries.tgz"
+    repo_url = "https://github.com/mbanon/fastspell/releases/download/dictionaries_v1/fastspell_dictionaries.tgz"
 
     if not os.path.exists(dest):
         raise RuntimeError(f"Download directory '{dest}' does not exist")
