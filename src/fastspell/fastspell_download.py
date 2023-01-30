@@ -91,7 +91,7 @@ def main():
     _, hunspell_codes, hunspell_paths = load_config()
     logging.debug(hunspell_codes)
     if args.download_dir == default_dir and not os.path.exists(args.download_dir):
-        os.mkdir(args.download_dir)
+        os.makedirs(args.download_dir, exist_ok=True)
     download_dictionaries(args.download_dir, hunspell_codes, force=args.force)
     # Trigger fasttext download
     dummy = FastSpell(lang='en', mode='aggr')
