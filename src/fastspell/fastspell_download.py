@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env python
 from tempfile import TemporaryDirectory
 from shutil import copyfile
 import argparse
