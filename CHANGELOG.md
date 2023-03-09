@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## FastSpell 0.8:
+- Icelandic mistakeable languages.
+
 ## FastSpell 0.7:
 - Default dictionaries are now installed via pip as a dependency.
 - Download of dictionaries in `fastspell-download` is deprecated.
