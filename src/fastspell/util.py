@@ -6,6 +6,7 @@ import hashlib
 import sys
 import os
 
+import fastspell_dictionaries
 import yaml
 
 
@@ -91,6 +92,7 @@ def load_config(config_path=None):
     # Firstly use hunspell path from config if there is
     # secondly try local/share/hunspell (which is the default download)
     # finally add all the remainin hunspell paths
+    hunspell_paths.append(fastspell_dictionaries.__path__[0])
     if "HOME" in os.environ:
         hunspell_paths.append(os.path.expanduser("~/.local/share/fastspell"))
         hunspell_paths.append(os.path.expanduser("~/.local/share/hunspell"))

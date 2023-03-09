@@ -25,12 +25,13 @@ Note that **Hunspell** requires `python-dev` and `libhunspell-dev`:
 sudo apt-get install python-dev libhunspell-dev
 ```
 
-Before running FastSpell for any of the languages listed as [similar](https://github.com/mbanon/fastspell/blob/main/fastspell/config/similar.yaml), you must have all the [needed Hunspell dictionaries](https://github.com/mbanon/fastspell/blob/main/fastspell/config/hunspell.yaml) for that language.
-For further explanation about how configuration works, [see below](#configuration).
-You can use the `fastspell-download` command to download all the needed files for the default configuration, just run it without arguments:
+To trigger the FastText model download before running fastspell, run:
 ```
 fastspell-download
 ```
+
+Since version 0.7 all the dictionaries are installed automatically with pip and there is no need to do anything else.
+For further explanation about how configuration works, [see below](#configuration).
 
 ### Conda
 Also, you can install the conda package:
@@ -68,6 +69,9 @@ In this file, the names of the dictionaries are stored. All similar languages mu
 For example, the first entry in the `hunspell_codes` is ` ca: ca_ES`, and the dictionary path is `~/.local/share/fastspell/`. That means that the Hunspell files for Catalan are  `~/.local/share/fastspell/ca_ES.dic` and `~/.local/share/fastspell/ca_ES.aff`.
 
 By default `dicpath` is empty, which means FastSpell will look in these directories for the dictionaries:
+```python
+fastspell_dictionaries.__path__[0]
+```
 ```
 ~/.local/share/fastspell
 ~/.local/share/hunspell

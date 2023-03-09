@@ -78,7 +78,7 @@ def main():
                         type=str,
                         help='Directory to store downloaded hunspell dictionaries.'
                         f' By default fastspell will use "{default_dir}"')
-    parser.add_argument('-f', '--force', action='store_true', help='Force download of dictionaries even if they are already present')
+    parser.add_argument('-f', '--force', action='store_true', help='Force download of dictionaries')
     groupL = parser.add_argument_group('Logging')
     groupL.add_argument('-q', '--quiet', action='store_true', help='Silent logging mode')
     groupL.add_argument('--debug', action='store_true', help='Debug logging mode')
@@ -87,14 +87,19 @@ def main():
     args = parser.parse_args()
     logging_setup(args)
 
+    # Trigger fasttext download
+    dummy = FastSpell(lang='en', mode='aggr')
+    logging.warning("Dictionaries are now installed alongside FastSpell with pip"
+                    " Use '-f' option to force download of dictionaries.")
+    if not args.force:
+        sys.exit(0)
+
     # Load config from yaml files to obtain needed dictionaries
     _, hunspell_codes, hunspell_paths = load_config()
     logging.debug(hunspell_codes)
     if args.download_dir == default_dir and not os.path.exists(args.download_dir):
         os.makedirs(args.download_dir, exist_ok=True)
     download_dictionaries(args.download_dir, hunspell_codes, force=args.force)
-    # Trigger fasttext download
-    dummy = FastSpell(lang='en', mode='aggr')
 
 if __name__ == "__main__":
     main()
