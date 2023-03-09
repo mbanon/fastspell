@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## FastSpell 0.7:
+- Default dictionaries are now installed via pip as a dependency.
+- Download of dictionaries in `fastspell-download` is deprecated.
+
 ## FastSpell 0.6.1:
 ### Changed:
 - Trigger fasttext download in fastspell-download command.
