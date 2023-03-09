@@ -47,6 +47,7 @@ Homepage = "https://github.com/mbanon/fastspell"
 "Prompsit Language Engineering" = "http://www.prompsit.com"
 Paracrawl = "https://paracrawl.eu/"
 MaCoCu = "https://macocu.eu"
+"HPLT Project" = "https://hplt-project.org"
 
 [build-system]
 requires = [ "setuptools>=61.2",]
