@@ -9,7 +9,12 @@ hunspell_codes:
     gl: gl_ES
     nb: nb_NO
     nn: nn_NO
+    sv: sv_SE
     da: da_DK
+    is: is_IS
+    de: de_DE
+    hu: hu_HU
+    et: et_ET
     bs: bs_BA
     cs: cs_CZ
     sk: sk_SK
