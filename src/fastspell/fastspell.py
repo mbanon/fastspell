@@ -78,6 +78,8 @@ class FastSpell:
         self.similar_langs, self.hunspell_codes, self.hunspell_paths = config
         self.load_scripts()
         self.load_hunspell_dicts()
+        self.refined_counts = {i/10: 0 for i in range(11)}
+        self.total_counts = {i/10: 0 for i in range(11)}
 
 
     def download_fasttext(self):
@@ -172,7 +174,9 @@ class FastSpell:
 
     def getlang(self, sent):
         sent=sent.replace("\n", " ").strip()
-        prediction = self.model.predict(sent.lower(), k=1)[0][0][len(self.prefix):]
+        prediction = self.model.predict(sent.lower(), k=1)
+        probability = prediction[1][0]
+        prediction = prediction[0][0][len(self.prefix):]
 
         # Return 'hbs' for all serbo-croatian variants
         # if hbs mode is enabled or hbs is the requested language
@@ -260,6 +264,10 @@ class FastSpell:
                 else:
                     refined_prediction = "unk"
 
+        if refined_prediction.split('_')[0] != prediction:
+            self.refined_counts[int(probability * 10) / 10] += 1
+        self.total_counts[int(probability * 10) / 10] += 1
+
         # If script detection not requested
         # remove it from prediction
         if self.script:
@@ -282,6 +290,15 @@ def perform_identification(args):
         lident = fs.getlang(line)
         args.output.write(line.strip()+"\t"+lident+"\n")
 
+    logging.info(f"Total bin counts of scores: {fs.total_counts}")
+    logging.info(f"Refined bin counts of scores: {fs.refined_counts}")
+    pct_bins = {}
+    for key in fs.total_counts.keys():
+        if fs.total_counts[key] == 0:
+            pct_bins[key] = 0
+            continue
+        pct_bins[key] = round(fs.refined_counts[key]/fs.total_counts[key]*100, 4)
+    logging.info(f"Refined bin % of scores: {pct_bins}")
     end_time = timeit.default_timer()
     logging.info("Elapsed time: {}".format(end_time - time_start))
 
