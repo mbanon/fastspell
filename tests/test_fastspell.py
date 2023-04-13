@@ -30,8 +30,7 @@ class FastSpellTest(unittest.TestCase):
 		# 'es' has similar languages in the default config
 		fs = FastSpell('es', mode='cons')
 
-		for line, expected in lines:
-			self.assertEqual(
-				[fs.getlang(line) for line, _ in lines],
-				[lang for _, lang in lines])
+		self.assertEqual(
+			[fs.getlang(line) for line, _ in lines],
+			[lang for _, lang in lines])
 
