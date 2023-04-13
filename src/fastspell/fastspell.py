@@ -98,7 +98,7 @@ class FastSpell:
             if os.path.exists(f"{p}/{lang_code}.dic") and os.path.exists(f"{p}/{lang_code}.aff"):
                 try:
                     dicpath = p + '/' + lang_code
-                    hunspell_obj = hunspell.HunSpell(f"{dicpath}.dic", f"{dicpath}.aff")
+                    hunspell_obj = hunspell.Hunspell(lang_code, hunspell_data_dir=p)
                     logging.debug(f"Loaded hunspell obj for '{lang_code}' in path: {dicpath}")
                     break
                 except:
