@@ -2,7 +2,7 @@
 ## FastSpell 0.9:
 - Now using CyHunspell.
 - Added automatic tests.
-- 
+
 ## FastSpell 0.8:
 - Icelandic mistakeable languages.
 
