@@ -6,7 +6,7 @@ readme = "README.md"
 description = "Targetted language identifier, based on FastText and Hunspell."
 requires-python = ">=3.8"
 dependencies = [
-    cyhunspell>=2.0.2, <=2.0.3",
+    "cyhunspell>=2.0.2, <=2.0.3",
     "fastspell-dictionaries==3.0",
     "fasttext==0.9.2",
     "urllib3",
