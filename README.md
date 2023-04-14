@@ -26,7 +26,7 @@ sudo apt-get install python3-dev
 ```
 
 **IMPORTANT**:
-For Python versions 3.9 and 3.10, you need to install `cyhunspell==2.0.3` before installing `fastspell`:
+In some cases (for example, when using Python 3.10), the `cyhunspell` version 2.0.2 installation will fail. If that's the case, you need to install `cyhunspell==2.0.3` before installing `fastspell`:
 ```
 pip install git+https://github.com/MSeal/cython_hunspell@2.0.3
 ```
