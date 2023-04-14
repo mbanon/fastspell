@@ -25,11 +25,18 @@ Note that it requires Python3.8 or higher, and the `python3-dev` package:
 sudo apt-get install python3-dev
 ```
 
+**IMPORTANT**:
+For Python versions 3.9 and 3.10, you need to install `cyhunspell==2.0.3` before installing `fastspell`:
+```
+pip install git+https://github.com/MSeal/cython_hunspell@2.0.3
+```
+
+### Model download
+
 To trigger the FastText model download before running fastspell, run:
 ```
 fastspell-download
 ```
-
 Since version 0.7 all the dictionaries are installed automatically with pip and there is no need to do anything else.
 For further explanation about how configuration works, [see below](#configuration).
 
