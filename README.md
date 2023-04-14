@@ -19,7 +19,7 @@ or directly from source:
 ```
 pip install .
 ```
-Note that it requires the `python3-dev` package:
+Note that it requires Python3.8 or higher, and the `python3-dev` package:
 
 ```
 sudo apt-get install python3-dev
