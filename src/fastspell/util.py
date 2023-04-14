@@ -71,12 +71,12 @@ def load_config(config_path=None):
         config_path = cur_path + "/config"
 
     #similar languages
-    similar_yaml_file = open(config_path+"/similar.yaml")
-    similar_langs = yaml.safe_load(similar_yaml_file)["similar"]
+    with open(config_path+"/similar.yaml") as similar_yaml_file:
+        similar_langs = yaml.safe_load(similar_yaml_file)["similar"]
 
     #hunspell
-    hunspell_codes_file = open(config_path+"/hunspell.yaml")
-    hunspell_config = yaml.safe_load(hunspell_codes_file)
+    with open(config_path+"/hunspell.yaml") as hunspell_codes_file:
+        hunspell_config = yaml.safe_load(hunspell_codes_file)
     hunspell_codes = hunspell_config["hunspell_codes"]
     if hunspell_config["dictpath"]:
         # If config has a hunspell path, add it

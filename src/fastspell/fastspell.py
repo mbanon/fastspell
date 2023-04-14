@@ -98,10 +98,10 @@ class FastSpell:
             if os.path.exists(f"{p}/{lang_code}.dic") and os.path.exists(f"{p}/{lang_code}.aff"):
                 try:
                     dicpath = p + '/' + lang_code
-                    hunspell_obj = hunspell.HunSpell(f"{dicpath}.dic", f"{dicpath}.aff")
+                    hunspell_obj = hunspell.Hunspell(lang_code, hunspell_data_dir=p)
                     logging.debug(f"Loaded hunspell obj for '{lang_code}' in path: {dicpath}")
                     break
-                except hunspell.HunSpellError:
+                except:
                     logging.error("Failed building Hunspell object for " + lang_code)
                     logging.error("Aborting.")
                     exit(1)
@@ -213,7 +213,7 @@ class FastSpell:
                 raw_toks = sent.strip().split(" ")
                 toks = remove_unwanted_words(raw_toks, self.lang)
                 try:
-                    correct_list = list(map(self.hunspell_objs.get(l).spell, toks))
+                    correct_list = list(map(self.hunspell_objs[l].spell, toks))
                 except UnicodeEncodeError: #...because it sometimes fails here for certain characters
                     correct_list = []
                 corrects = sum(correct_list*1)
