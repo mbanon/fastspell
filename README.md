@@ -19,10 +19,10 @@ or directly from source:
 ```
 pip install .
 ```
-Note that **Hunspell** requires `python-dev` and `libhunspell-dev`:
+Note that it requires the `python3-dev` package:
 
 ```
-sudo apt-get install python-dev libhunspell-dev
+sudo apt-get install python3-dev
 ```
 
 To trigger the FastText model download before running fastspell, run:
@@ -39,17 +39,12 @@ Also, you can install the conda package:
 conda install -c conda-forge -c bitextor fastspell
 ```
 
-### RedHat installation
-For RedHat and its derivatives
+### Automatic testing
+Some automatic tests are provided to check that the installation went fine. In order to check it, go to the `/tests` directory and run:
 ```
-sudo dnf install hunspell hunspell-devel
+python3 -m unittest discover
 ```
-must be ran to install Hunspell.
-
-If you found an installation error during `pip install hunspell` that says `/usr/bin/ld: cannot find -lhunspell`, you'll probably need to add a symlink to `/usr/lib64` or other path in your environment (like `/home/user/.local/lib`).
-```
-sudo ln -s /usr/lib64/libhunspell-1.7.so /usr/lib64/libhunspell.so
-```
+You might need to istall the `unittest` package with `pip`, in  case you don't have it installed beforehand.
 
 ## Configuration
 
@@ -132,6 +127,7 @@ Logging:
   -v, --version      show version of this script and exit
 ```
 
+
 ## Aggressive vs Conservative
 
 FastSpell comes in two flavours: Aggressive and Conservative.
@@ -160,8 +156,8 @@ Quen pode solicitar o dito financiamento?
 ```
 Command:
 ```
-fastspell $L --aggr inputtext
-fastspell $L --cons inputtext
+fastspell  --aggr lang inputtext
+fastspell  --cons lang inputtext
 ```
 Aggressive output:
 ```
@@ -192,8 +188,8 @@ Quen pode solicitar o dito financiamento?       gl
 ```
 Getting stats:
 ```
-cat inputtext | fastspell $L --aggr | cut -f2 | sort | uniq -c | sort -nr
-cat inputtext | fastspell $L --cons | cut -f2 | sort | uniq -c | sort -nr
+cat inputtext | fastspell --aggr $L | cut -f2 | sort | uniq -c | sort -nr
+cat inputtext | fastspell --cons $L | cut -f2 | sort | uniq -c | sort -nr
 ```
 Aggressive:
 ```
