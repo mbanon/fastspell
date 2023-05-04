@@ -1,6 +1,6 @@
 dist/
 build/
 fastspell.egg-info/
-fastspell/__pycache__/
+__pycache__/
 *.swp
 /src/fastspell/lid.176.bin
