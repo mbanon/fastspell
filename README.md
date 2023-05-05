@@ -1,4 +1,6 @@
 # FastSpell
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/fastspell)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/mbanon/fastspell/release.yaml)
 
 Targetted language identifier, based on FastText and Hunspell.
 
