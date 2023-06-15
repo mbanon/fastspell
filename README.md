@@ -32,7 +32,7 @@ In some cases (for example, when using Python 3.10), the `cyhunspell` version 2.
 
 First make sure build dependencies are installed
 ```
-sudo apt install build-essential autoconf autopoint
+sudo apt install build-essential autoconf autopoint libtool
 ```
 then install the pip package
 ```
