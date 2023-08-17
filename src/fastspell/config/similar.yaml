@@ -19,4 +19,4 @@ similar:
     sr: [bs, hr, me, sr, sl]
     hbs_lat: [hbs_lat, sl]
     hbs_cyr: [hbs_cyr, ru, mk, bg]
-    sl: [hbs_lat, sl]
+    sl: [hbs_lat, sr, hr, bs, sl]
