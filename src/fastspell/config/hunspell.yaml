@@ -4,30 +4,34 @@ dictpath: ""
 
 #This is how hunspell files (.dic and .aff) are named in dictpath
 hunspell_codes:
-    bg: bg_BG
-    ca: ca_ES
-    gl: gl_ES
-    nb: nb_NO
-    nn: nn_NO
-    sv: sv_SE
-    da: da_DK
-    is: is_IS
-    de: de_DE
-    hu: hu_HU
-    et: et_ET
-    bs: bs_BA
-    cs: cs_CZ
-    sk: sk_SK
-    hr: hr_HR
-    me: sr_ME
-    mk: mk_MK
-    sq: sq_AL
-    sr: sr_RS
-    sl: sl_SI
-    es: es_ES
-    pt: pt_PT
-    nl: nl_NL
     af: af_ZA
+    bg: bg_BG
+    bs: bs_BA
+    ca: ca_ES
+    cs: cs_CZ
+    da: da_DK
+    de: de_DE
+    es: es_ES
+    et: et_ET
+    gl: gl_ES
     hbs_lat: hr_HR
     hbs_cyr: sr_RS
+    hr: hr_HR
+    hu: hu_HU
+    is: is_IS
+    kn: kn_IN
+    me: sr_ME
+    mk: mk_MK
+    ml: ml_IN
+    nb: nb_NO
+    nl: nl_NL
+    nn: nn_NO
+    pt: pt_PT
     ru: ru_RU
+    sk: sk_SK
+    sl: sl_SI
+    sq: sq_AL
+    sr: sr_RS
+    sv: sv_SE   
+    ta: ta_IN
+    
