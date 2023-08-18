@@ -11,11 +11,14 @@ hunspell_codes:
     bs: bs_BA
     ca: ca_ES
     cs: cs_CZ
+    cy: cy
     da: da_DK
     de: de_DE
+    en: en_EN
     es: es_ES
     et: et_ET
     fa: fa_FA
+    fi: fi_FI
     fo: fo
     gl: gl_ES
     gu: gu_IN
@@ -40,6 +43,7 @@ hunspell_codes:
     ru: ru_RU
     sk: sk_SK
     sl: sl_SI
+    so: so_SO
     sq: sq_AL
     sr: sr_RS
     sv: sv_SE   
