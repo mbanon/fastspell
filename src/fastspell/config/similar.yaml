@@ -17,6 +17,7 @@ similar:
     gu: [mr, bn, hi, ur, ne, gu]
     hbs_lat: [sl, hbs_lat]
     hbs_cyr: [ru, mk, bg,  hbs_cyr]    
+    he: [yi, he]
     hi: [ur, mr, ne, gu, hi]
     hr: [bs, me, sr, sl, hr]
     id: [ms, id]

@@ -28,6 +28,7 @@ hunspell_codes:
     gu: gu_IN
     hbs_lat: hr_HR
     hbs_cyr: sr_RS
+    he: he
     hi: hi_IN
     hr: hr_HR
     hu: hu_HU
@@ -64,3 +65,4 @@ hunspell_codes:
     tt: tt_RU
     uk: uk_UA
     ur: ur_PK
+    yi: yi
