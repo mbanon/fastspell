@@ -1,7 +1,8 @@
 #Target langs (keys) dict for mistakeable languages (values)
 similar:
     ar: [fa, ar]
-    af: [nl, de, af]    
+    af: [nl, de, af]
+    be: [ru, uk, be]    
     bg: [mk, bg]
     bs: [hr, me, sr, sl, bs]
     ca: [es, ca]

@@ -6,6 +6,7 @@ dictpath: ""
 hunspell_codes:
     af: af_ZA
     ar: ar
+    be: be_BY
     bg: bg_BG
     bn: bn_BD
     bs: bs_BA
@@ -51,4 +52,5 @@ hunspell_codes:
     sv: sv_SE   
     ta: ta_IN
     tt: tt_RU
+    uk: uk_UA
     ur: ur_PK
