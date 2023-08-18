@@ -27,6 +27,7 @@ hunspell_codes:
     hi: hi_IN
     hr: hr_HR
     hu: hu_HU
+    id: id_ID
     is: is_IS
     kk: kk_KZ
     kn: kn_IN
@@ -35,6 +36,7 @@ hunspell_codes:
     mk: mk_MK
     ml: ml_IN
     mr: mr_IN
+    ms: ms_MY
     nb: nb_NO
     ne: ne_NP
     nl: nl_NL
