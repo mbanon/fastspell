@@ -35,6 +35,8 @@ hunspell_codes:
     kk: kk_KZ
     kn: kn_IN
     ky: ky_KG
+    lt: lt
+    lv: lv
     me: sr_ME
     mk: mk_MK
     ml: ml_IN
@@ -44,6 +46,7 @@ hunspell_codes:
     ne: ne_NP
     nl: nl_NL
     nn: nn_NO
+    pl: pl
     pt: pt_PT
     ru: ru_RU
     sk: sk_SK
