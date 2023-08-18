@@ -25,7 +25,9 @@ hunspell_codes:
     hr: hr_HR
     hu: hu_HU
     is: is_IS
+    kk: kk_KZ
     kn: kn_IN
+    ky: ky_KG
     me: sr_ME
     mk: mk_MK
     ml: ml_IN
@@ -42,4 +44,5 @@ hunspell_codes:
     sr: sr_RS
     sv: sv_SE   
     ta: ta_IN
+    tt: tt_RU
     ur: ur_PK
