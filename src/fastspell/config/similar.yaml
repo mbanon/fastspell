@@ -9,6 +9,7 @@ similar:
     cs: [sk, cs]
     da: [nb, da]
     es: [gl, ca, es]
+    fa: [ar, az, tg, fa]
     gl: [es, pt, gl]
     gu: [mr, bn, hi, ur, ne, gu]
     hbs_lat: [sl, hbs_lat]
@@ -28,3 +29,4 @@ similar:
     sr: [bs, hr, me, sl, sr]
     ta: [ml, kn, ta]
     tt: [kk, ky, ru, tt]
+    uk: [be, ru, uk]
