@@ -256,8 +256,11 @@ class FastSpell:
                             #Just take one
                             refined_prediction = best_keys[0]
                     if self.mode == "cons":
-                        #Conservative: just keep it as unknown
-                        refined_prediction = "unk"
+                        #Conservative: just keep it as unknown, unless the  error_rate is 0.0 for the targetted language
+                        if self.lang in best_keys and best_value == 0:
+                            refined_prediction = self.lang
+                        else:
+                            refined_prediction = "unk"
             else:
                 #Nothing in the spellchecking list
                 if self.mode == "aggr":
