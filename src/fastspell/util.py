@@ -1,13 +1,18 @@
 from tempfile import TemporaryDirectory
 from argparse import ArgumentTypeError
-from string import punctuation
+#from string import punctuation
 import logging
 import hashlib
 import sys
 import os
+import unicodedata
 
 import fastspell_dictionaries
 import yaml
+
+
+
+punct = dict.fromkeys(i for i in range(sys.maxunicode) if unicodedata.category(chr(i)).startswith('P')) #punctuation
 
 
 def logging_setup(args = None):
@@ -36,7 +41,7 @@ def remove_unwanted_words(tokens, lang):
     newtokens = []
     isfirsttoken=True
     for token in tokens:
-        token=token.strip(punctuation+" ")
+        token=token.translate(punct).strip()
         if lang=="de":
             if any(c.isalpha() for c in token): #token.upper() != token.lower():
                 newtokens.append(token)
