@@ -212,10 +212,15 @@ class FastSpell:
                 dec_sent = sent.encode(encoding='UTF-8',errors='strict').decode('UTF-8') #Not 100% sure about this...
                 raw_toks = sent.strip().split(" ")
                 toks = remove_unwanted_words(raw_toks, self.lang)
-                try:
-                    correct_list = list(map(self.hunspell_objs[l].spell, toks))
-                except UnicodeEncodeError: #...because it sometimes fails here for certain characters
-                    correct_list = []
+                #spellcheck_map = map_except(self.hunspell_objs[l].spell, toks)
+                correct_list = []
+                for token in toks:
+                    try:
+                        correct_list.append(self.hunspell_objs[l].spell(token))                                 
+                        #correct_list = list(map(self.hunspell_objs[l].spell, toks))
+                    except UnicodeEncodeError as ex: #...because it sometimes fails here for certain characters
+                        logging.debug(ex)
+                        correct_list.append(False)
                 corrects = sum(correct_list*1)
                 logging.debug("Tokens: " +str(toks))
                 logging.debug("Corrects: " + str(correct_list))
