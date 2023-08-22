@@ -5,15 +5,16 @@ import logging
 import hashlib
 import sys
 import os
-import unicodedata
+#import unicodedata
+import regex
 
 import fastspell_dictionaries
 import yaml
 
 
 
-punct = dict.fromkeys(i for i in range(sys.maxunicode) if unicodedata.category(chr(i)).startswith('P')) #punctuation
-
+#punct = dict.fromkeys(i for i in range(sys.maxunicode) if unicodedata.category(chr(i)).startswith('P')) #punctuation
+PUNCT_REGEX = regex.compile("(\p{P}+$|^\p{P}+)")
 
 def logging_setup(args = None):
     logger = logging.getLogger()
@@ -41,7 +42,7 @@ def remove_unwanted_words(tokens, lang):
     newtokens = []
     isfirsttoken=True
     for token in tokens:
-        token=token.translate(punct).strip()
+        token=PUNCT_REGEX.sub("", token.strip()).strip()  #Regex to remove punctuation
         if lang=="de":
             if any(c.isalpha() for c in token): #token.upper() != token.lower():
                 newtokens.append(token)
