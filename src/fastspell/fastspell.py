@@ -57,7 +57,7 @@ def initialization():
 
 class FastSpell:
 
-    threshold = 0.25 #Hunspell max error rate allowed in a sentence
+    threshold = 0.5 #Hunspell max error rate allowed in a sentence
     prefix = "__label__" #FastText returns langs labeled as __label__LANGCODE
     ft_model_hash = "01810bc59c6a3d2b79c79e6336612f65"
     ft_download_url = "https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.bin"
@@ -230,7 +230,7 @@ class FastSpell:
                 else:
                     error_rate = 1
                 logging.debug("error_rate: " + str(error_rate))
-                if error_rate < self.threshold: #we don't keep it if the error rate is above the threshold
+                if error_rate <= self.threshold: #we don't keep it if the error rate is above the threshold
                     spellchecked[l] =  error_rate
                 logging.debug("----------------")
 

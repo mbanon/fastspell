@@ -3,6 +3,7 @@
 ## FastSpell 1.10
 - Added more languages: af, ar, az, be, bn, cy, et, fa, fi, ga, gu, he, hi, hu, id, kk, kn, ky, lt, lv, mn, ml, mr, ms, ne, pl, pt, ru, so, sv, ta, te, th, tr, tt, uk, ur, uz
 - Fixed bug with character encoding that resulted in some sentences not being evaluated for certain languages.
+- Conservative mode is now less conservative.
 
 ## FastSpell 0.9:
 - Now using CyHunspell.
