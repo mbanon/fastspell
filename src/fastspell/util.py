@@ -38,10 +38,11 @@ def remove_unwanted_words(tokens, lang):
     for token in tokens:
         token=token.strip(punctuation+" ")
         if lang=="de":
-            if token.upper() != token.lower():
+            if any(c.isalpha() for c in token): #token.upper() != token.lower():
                 newtokens.append(token)
         else:
-            if token.upper() != token.lower() and (isfirsttoken or token[0]!=token[0].upper()):    
+            #if token.upper() != token.lower() and (isfirsttoken or (token[0]!=token[0].upper()):
+            if any(c.isalpha() for c in token) and ( isfirsttoken or token[0]==token[0].lower()):
                 newtokens.append(token.lower())
         isfirsttoken=False
     return newtokens
