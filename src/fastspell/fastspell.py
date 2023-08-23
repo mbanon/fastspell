@@ -185,6 +185,8 @@ class FastSpell:
             prediction = "nb"
         if prediction == "sh":
             prediction = "sr"
+        if prediction == "he" and self.lang == "iw": #trick for deprecated iw language code for hebrew
+            prediction = "iw"
 
         # Always detect script if supported (will be printed only if requested)
         script = ''
