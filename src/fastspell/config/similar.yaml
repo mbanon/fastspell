@@ -41,6 +41,7 @@ similar:
     ne: [mr, hi, ur, bn, gu, ne]
     nl: [af, nl]
     nn: [nb, da, sv, is, fo, nn]
+    "no": [sv, da, nn, "no"] #same as NB, since dict is the same
     pl: [cs, sk, pl]
     pt: [es, gl, pt]
     ru: [be, uk, bg, ru]

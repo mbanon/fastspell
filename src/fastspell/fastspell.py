@@ -181,7 +181,7 @@ class FastSpell:
 
         # If prediction does not specify the with variant
         # replace it by any of the variants to trigger hunspell refinement
-        if prediction == "no":
+        if prediction == "no" and self.lang != "no":
             prediction = "nb"
         if prediction == "sh":
             prediction = "sr"
