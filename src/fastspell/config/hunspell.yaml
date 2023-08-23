@@ -14,13 +14,13 @@ hunspell_codes:
     bs: bs_BA
     ca: ca_ES
     cs: cs_CZ
-    cy: cy
+    cy: cy_GB
     da: da_DK
     de: de_DE
-    en: en_EN
+    en: en_GB
     es: es_ES
     et: et_ET
-    fa: fa_FA
+    fa: fa_IR
     fi: fi_FI
     fo: fo
     ga: ga
@@ -28,23 +28,23 @@ hunspell_codes:
     gu: gu_IN
     hbs_lat: hbs_Lat_HBS
     hbs_cyr: hbs_Cyr_HBS
-    he: he
+    he: he_IL
     hi: hi_IN
     hr: hr_HR
     hu: hu_HU
     id: id_ID
     is: is_IS
-    iw: he
+    iw: he_IL
     kk: kk_KZ
     kn: kn_IN
     ky: ky_KG
     lo: lo_LA
     lt: lt
-    lv: lv
+    lv: lv_LV
     me: sr_ME
     mk: mk_MK
     ml: ml_IN
-    mn: mn
+    mn: mn_MN
     mr: mr_IN
     ms: ms_MY
     nb: nb_NO
@@ -66,7 +66,7 @@ hunspell_codes:
     te: te_IN
     tg: tg_TG
     th: th_TH
-    tk: tk_TM
+    tk: tk
     tr: tr
     tt: tt_RU
     uk: uk_UA
