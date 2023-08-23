@@ -26,8 +26,8 @@ hunspell_codes:
     ga: ga
     gl: gl_ES
     gu: gu_IN
-    hbs_lat: hr_HR
-    hbs_cyr: sr_RS
+    hbs_lat: hbs_Lat_HBS
+    hbs_cyr: hbs_Cyr_HBS
     he: he
     hi: hi_IN
     hr: hr_HR
