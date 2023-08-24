@@ -57,7 +57,7 @@ def initialization():
 
 class FastSpell:
 
-    threshold = 0.25 #Hunspell max error rate allowed in a sentence
+    threshold = 0.5 #Hunspell max error rate allowed in a sentence
     prefix = "__label__" #FastText returns langs labeled as __label__LANGCODE
     ft_model_hash = "01810bc59c6a3d2b79c79e6336612f65"
     ft_download_url = "https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.bin"
@@ -181,10 +181,12 @@ class FastSpell:
 
         # If prediction does not specify the with variant
         # replace it by any of the variants to trigger hunspell refinement
-        if prediction == "no":
+        if prediction == "no" and self.lang != "no":
             prediction = "nb"
         if prediction == "sh":
             prediction = "sr"
+        if prediction == "he" and self.lang == "iw": #trick for deprecated iw language code for hebrew
+            prediction = "iw"
 
         # Always detect script if supported (will be printed only if requested)
         script = ''
@@ -212,10 +214,15 @@ class FastSpell:
                 dec_sent = sent.encode(encoding='UTF-8',errors='strict').decode('UTF-8') #Not 100% sure about this...
                 raw_toks = sent.strip().split(" ")
                 toks = remove_unwanted_words(raw_toks, self.lang)
-                try:
-                    correct_list = list(map(self.hunspell_objs[l].spell, toks))
-                except UnicodeEncodeError: #...because it sometimes fails here for certain characters
-                    correct_list = []
+                #spellcheck_map = map_except(self.hunspell_objs[l].spell, toks)
+                correct_list = []
+                for token in toks:
+                    try:
+                        correct_list.append(self.hunspell_objs[l].spell(token))                                 
+                        #correct_list = list(map(self.hunspell_objs[l].spell, toks))
+                    except UnicodeEncodeError as ex: #...because it sometimes fails here for certain characters
+                        logging.debug(ex)
+                        correct_list.append(False)
                 corrects = sum(correct_list*1)
                 logging.debug("Tokens: " +str(toks))
                 logging.debug("Corrects: " + str(correct_list))
@@ -225,7 +232,7 @@ class FastSpell:
                 else:
                     error_rate = 1
                 logging.debug("error_rate: " + str(error_rate))
-                if error_rate < self.threshold: #we don't keep it if the error rate is above the threshold
+                if error_rate <= self.threshold: #we don't keep it if the error rate is above the threshold
                     spellchecked[l] =  error_rate
                 logging.debug("----------------")
 
@@ -251,8 +258,11 @@ class FastSpell:
                             #Just take one
                             refined_prediction = best_keys[0]
                     if self.mode == "cons":
-                        #Conservative: just keep it as unknown
-                        refined_prediction = "unk"
+                        #Conservative: just keep it as unknown, unless the  error_rate is 0.0 for the targetted language
+                        if self.lang in best_keys and best_value == 0:
+                            refined_prediction = self.lang
+                        else:
+                            refined_prediction = "unk"
             else:
                 #Nothing in the spellchecking list
                 if self.mode == "aggr":
