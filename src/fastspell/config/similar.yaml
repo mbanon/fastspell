@@ -36,8 +36,8 @@ similar:
     #ps: [ar, fa, ps]
     pt: [es, gl, pt]
     ru: [uk, bg, ru]
-    sk: [cs, pl, sr,  sk]
-    sl: [hbs_lat, sr, hr, bs, sl]    
+    sk: [cs, pl, sk]
+    sl: [sr, hr, bs, sl]    
     so: [en, fi, cy, kn, so]    
     sr: [bs, hr, sl, sr]#should add me (not adding because dict is the same as bs)
     sv: [da, nb,sv]
