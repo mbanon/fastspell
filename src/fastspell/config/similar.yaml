@@ -4,7 +4,7 @@ similar:
     az: [tr, az]
     be: [ru, uk, be]    
     bg: [mk, ru, bg]
-    bs: [hr, sr, sl, bs] #should add me (not adding because dict is the same as bs)
+    bs: [hr, sr, sl, bs] #add me
     ca: [es, oc, ca]
     cs: [sk, cs]
     cy: [ga, en, cy]
@@ -16,14 +16,14 @@ similar:
     hbs_lat: [sl, hbs_lat]
     hbs_cyr: [ru, mk, bg,  hbs_cyr]    
     hi: [mr, ne, hi] #add SD
-    hr: [bs, sr, sl, hr] #should add me (not adding because dict is the same as bs)
+    hr: [bs, sr, sl, hr]  #add me
     id: [ms, id]
     is: [da, nb, nn, sv, is]
     iw: [yi, iw]
     kk: [ky, tt, ru, kk]
     ky: [ru, kk, tt, mn, ky]
     lv: [lt, lv]
-    me: [hr, sr, sl, me]  #should add bs (not adding because dict is the same as me)
+    me: [hr, sr, sl, bs, me] 
     mk: [bg, sr, ru,  mk]    
     mn: [ru, ky, bg, mn]
     mr: [hi, mr]
@@ -39,7 +39,7 @@ similar:
     sk: [cs, pl, sk]
     sl: [sr, hr, bs, sl]    
     so: [en, fi, cy, kn, so]    
-    sr: [bs, hr, sl, sr]#should add me (not adding because dict is the same as bs)
+    sr: [bs, hr, sl, me, sr] 
     sv: [da, nb,sv]
     tt: [kk, ky, ru, tt] #maybe add BA
     uk: [be, ru, uk, mk, bg]
