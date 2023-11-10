@@ -41,9 +41,8 @@ hunspell_codes:
     lo: lo_LA
     lt: lt
     lv: lv_LV
-    #me: sr_ME
-    me-lat: sr_ME_lat
-    me-cyr: sr_ME_cyr
+    me_lat: sr_ME_lat
+    me_cyr: sr_ME_cyr
     mk: mk_MK
     ml: ml_IN
     mn: mn_MN
@@ -62,8 +61,8 @@ hunspell_codes:
     sl: sl_SI
     so: so_SO
     sq: sq_AL
-    sr-cyr: sr_RS_cyr
-    sr-lat: sr_RS_lat    
+    sr_lat: sr_RS_lat
+    sr_cyr: sr_RS_cyr
     sv: sv_SE   
     ta: ta_IN
     te: te_IN

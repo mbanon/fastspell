@@ -79,8 +79,7 @@ class FastSpell:
         self.load_scripts()
         self.load_hunspell_dicts()
 
-       
-        
+
     def download_fasttext(self):
         ''' Download and check integrity of FastText model '''
         ft_model_path = os.path.join(self.cur_path, "lid.176.bin") #The model should be in the same directory
@@ -128,20 +127,8 @@ class FastSpell:
         self.similar = []
         for sim_entry in self.similar_langs:
             if sim_entry.split('_')[0] == self.lang:
-                simlangsarray = self.similar_langs[sim_entry]
-                if "sr" in simlangsarray:
-                    simlangsarray.remove("sr")
-                    simlangsarray.append("sr-lat")
-                    simlangsarray.append("sr-cyr")
-                if "me" in simlangsarray:
-                    simlangsarray.remove("me")
-                    simlangsarray.append("me-lat")
-                    simlangsarray.append("me-cyr")
-                
-                self.similar.append(simlangsarray)
-        
-        
-        
+                self.similar.append(self.similar_langs[sim_entry])
+
         logging.debug(f"Similar lists for '{self.lang}': {self.similar}")
         self.hunspell_objs = {}
         for similar_list in self.similar:
@@ -165,6 +152,18 @@ class FastSpell:
                 'hbs_cyr': str.maketrans('', '',
                     'АаБбВвГгДддЂђЕеЖжЗзЗ́з́ИиКкkЛлЉљМмНнЊњОоПпРрСсС́с́ЋћТтУуФфХхЦцЧчШшЩщҵҥӕ'),
             },
+            "sr": {
+                'sr_cyr': str.maketrans('', '',
+                    'aAbBcčČćĆdDđĐeEfFgGhHiIjJkKlLmMnNoOpPrRsSšŠŚśtuUvVzZžŽŹźﬁﬂﬆĳœǌ'),
+                'sr_cyr': str.maketrans('', '',
+                    'АаБбВвГгДддЂђЕеЖжЗзЗ́з́ИиКкkЛлЉљМмНнЊњОоПпРрСсС́с́ЋћТтУуФфХхЦцЧчШшЩщҵҥӕ'),
+            },
+            "me": {
+                'me_cyr': str.maketrans('', '',
+                    'aAbBcčČćĆdDđĐeEfFgGhHiIjJkKlLmMnNoOpPrRsSšŠŚśtuUvVzZžŽŹźﬁﬂﬆĳœǌ'),
+                'me_cyr': str.maketrans('', '',
+                    'АаБбВвГгДддЂђЕеЖжЗзЗ́з́ИиКкkЛлЉљМмНнЊњОоПпРрСсС́с́ЋћТтУуФфХхЦцЧчШшЩщҵҥӕ'),
+            }
         }
 
 
@@ -209,29 +208,21 @@ class FastSpell:
 
         #TODO: Confidence score?
 
-
-        #biggest ñapa ever
-        tricked_hunspell_keys = list(self.hunspell_objs.keys())
-        if "sr-lat" in tricked_hunspell_keys or "sr-cyr" in tricked_hunspell_keys:
-            tricked_hunspell_keys.append("sr")
-        
-        if "me-lat" in tricked_hunspell_keys or "me-cyr" in tricked_hunspell_keys:
-            tricked_hunspell_keys.append("me")
-                
-        if self.similar == [] or prediction not in tricked_hunspell_keys:
-        #Non mistakeable language: just return FastText prediction            
+        if self.similar == [] or prediction not in self.hunspell_objs:
+        #Non mistakeable language: just return FastText prediction
             refined_prediction = prediction
         else:
         #The target language is mistakeable
             # Obtain the list of languages to spellcheck, only similar for the current lang and script
-            current_similar = None            
-            for sim_list in self.similar:                
-                if prediction in sim_list or f'{prediction}_{script}' in sim_list or (prediction=="sr" and ("sr-lat" in sim_list) or ("sr-cyr" in sim_list)) or (prediction=="me" and ("me-lat" in sim_list) or ("me-cyr" in sim_list)):
-                    current_similar = sim_list                
+            current_similar = None
+            for sim_list in self.similar:
+                if prediction in sim_list or f'{prediction}_{script}' in sim_list:
+                    current_similar = sim_list
 
             spellchecked = {}
             for l in current_similar:
                 #Get spellchecking for all the mistakeable languages
+                logging.debug(l)
                 dec_sent = sent.encode(encoding='UTF-8',errors='strict').decode('UTF-8') #Not 100% sure about this...
                 raw_toks = sent.strip().split(" ")
                 toks = remove_unwanted_words(raw_toks, self.lang)
@@ -263,21 +254,6 @@ class FastSpell:
                 #get best values and keys
                 best_value = min(spellchecked.values())
                 best_keys = [k for k, v in spellchecked.items() if v == best_value]
-                
-                if ("sr-lat" in best_keys) or ("sr-cyr" in best_keys):
-                    best_keys.append("sr")
-                    if "sr-lat" in best_keys:
-                        best_keys.remove("sr-lat")
-                    if "sr-cyr" in best_keys:
-                        best_keys.remove("sr-cyr")
-                        
-                if ("me-lat" in best_keys) or ("me-cyr" in best_keys):
-                    best_keys.append("me")
-                    if "me-lat" in best_keys:
-                        best_keys.remove("me-lat")
-                    if "me-cyr" in best_keys:
-                        best_keys.remove("me-cyr")
-                    
                 if len(best_keys)==1:
                     #Only one language scoring the best
                     refined_prediction = best_keys[0]

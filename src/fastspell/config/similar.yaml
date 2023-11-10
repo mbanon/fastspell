@@ -4,7 +4,7 @@ similar:
     az: [tr, az]
     be: [ru, uk, be]    
     bg: [mk, ru, bg]
-    bs: [hr, sr, sl, bs] #add me
+    bs: [hr, sr_lat, sl, bs] #should add me (not adding because dict is the same as sr)
     ca: [es, oc, ca]
     cs: [sk, cs]
     cy: [ga, en, cy]
@@ -14,17 +14,18 @@ similar:
     ga: [cy, en, ga]
     gl: [es, pt, gl]
     hbs_lat: [sl, hbs_lat]
-    hbs_cyr: [ru, mk, bg,  hbs_cyr]    
+    hbs_cyr: [ru, mk, bg, hbs_cyr]
     hi: [mr, ne, hi] #add SD
-    hr: [bs, sr, sl, hr]  #add me
+    hr: [bs, sr_lat, sl, hr] #should add me (not adding because dict is the same as sr)
     id: [ms, id]
     is: [da, nb, nn, sv, is]
     iw: [yi, iw]
     kk: [ky, tt, ru, kk]
     ky: [ru, kk, tt, mn, ky]
     lv: [lt, lv]
-    me: [hr, sr, sl, bs, me] 
-    mk: [bg, sr, ru,  mk]    
+    me_lat: [hr, sl, me_lat]
+    me_cyr: [bg, mk, ru, me_cyr] #
+    mk: [bg, sr_cyr, ru,  mk]
     mn: [ru, ky, bg, mn]
     mr: [hi, mr]
     ms: [id, ms]
@@ -37,12 +38,13 @@ similar:
     pt: [es, gl, pt]
     ru: [uk, bg, ru]
     sk: [cs, pl, sk]
-    sl: [sr, hr, bs, sl]    
-    so: [en, fi, cy, kn, so]    
-    sr: [bs, hr, sl, me, sr] 
+    sl: [sr_lat, hr, bs, sl]
+    so: [en, fi, cy, kn, so]
+    sr_cyr: [mk, bg, ru, sr_cyr] #should add me (not adding because dict is the same as sr)
+    sr_lat: [bs, hr, sl, sr_lat]
     sv: [da, nb,sv]
     tt: [kk, ky, ru, tt] #maybe add BA
     uk: [be, ru, uk, mk, bg]
-    ur: [fa, ar, ur]    
+    ur: [fa, ar, ur]
     uz: [tr, uz]
     yi: [he, yi]
