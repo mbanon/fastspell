@@ -63,7 +63,7 @@ class FastSpell:
     ft_download_url = "https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.bin"
 
 
-    def __init__(self, lang, config_path=None, download_dics=False,
+    def __init__(self, lang, config_path=None,
                  mode="cons", hbs=False, script=False):
         assert (mode=="cons" or mode=="aggr"), "Unknown mode. Use 'aggr' for aggressive or 'cons' for conservative"
 
