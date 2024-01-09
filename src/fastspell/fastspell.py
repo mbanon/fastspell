@@ -127,7 +127,7 @@ class FastSpell:
         self.similar = []
         for sim_entry in self.similar_langs:
             if sim_entry.split('_')[0] == self.lang:
-                self.similar.append(self.similar_langs[sim_entry])
+                self.similar.append(self.similar_langs[sim_entry] + [self.lang])
 
         logging.debug(f"Similar lists for '{self.lang}': {self.similar}")
         self.hunspell_objs = {}
