@@ -24,6 +24,9 @@ fasttext.FastText.eprint = lambda x: None
 HBS_LANGS = ('hbs', 'sh', 'bs', 'sr', 'hr', 'me')
 
 
+# logger = logging.getLogger()
+# logger.setLevel(logging.DEBUG)
+
 def initialization():
     parser = argparse.ArgumentParser(prog=os.path.basename(sys.argv[0]), formatter_class=argparse.ArgumentDefaultsHelpFormatter, description=__doc__)
     parser.add_argument('lang', type=str)
@@ -94,6 +97,8 @@ class FastSpell:
 
     def search_hunspell_dict(self, lang_code):
         ''' Search in the paths for a hunspell dictionary and load it '''
+        hunspell_obj = None
+
         for p in self.hunspell_paths:
             if os.path.exists(f"{p}/{lang_code}.dic") and os.path.exists(f"{p}/{lang_code}.aff"):
                 try:
@@ -105,10 +110,36 @@ class FastSpell:
                     logging.error("Failed building Hunspell object for " + lang_code)
                     logging.error("Aborting.")
                     exit(1)
-        else:
-            raise RuntimeError(f"It does not exist any valid dictionary directory"
-                               f"for {lang_code} in the paths {self.hunspell_paths}."
+
+        if hunspell_obj is None:
+            for p in self.hunspell_paths:
+                if not os.path.exists(p):
+                    continue
+
+                potential_files = [path for path in os.listdir(p) if os.path.basename(path).startswith(lang_code)]
+                if f"{lang_code}.dic" in potential_files and f"{lang_code}.aff" in potential_files:
+                    dic = lang_code
+                elif f"{lang_code}_{lang_code.upper()}.dic" in potential_files and f"{lang_code}_{lang_code.upper()}.aff" in potential_files:
+                    dic = f"{lang_code}_{lang_code.upper()}"
+                elif len(potential_files) == 2:
+                    dic = potential_files[0][:-4]
+                else:
+                    continue
+
+                try:
+                    hunspell_obj = hunspell.Hunspell(dic, hunspell_data_dir=p)
+                    logging.debug(f"Loaded hunspell obj for '{lang_code}' in path: {p + '/' + dic}")
+                    break
+                except:
+                    logging.error("Failed building Hunspell object for " + dic)
+                    logging.error("Aborting.")
+                    exit(1)
+
+        if hunspell_obj is None:
+            raise RuntimeError(f"It does not exist any valid dictionary directory "
+                               f"for {lang_code} in the paths {self.hunspell_paths}. "
                                f"Please, execute 'fastspell-download'.")
+
         return hunspell_obj
 
 
@@ -208,6 +239,9 @@ class FastSpell:
 
         #TODO: Confidence score?
 
+        logging.debug(prediction)
+        logging.debug(self.similar)
+
         if self.similar == [] or prediction not in self.hunspell_objs:
         #Non mistakeable language: just return FastText prediction
             refined_prediction = prediction
@@ -218,6 +252,7 @@ class FastSpell:
             for sim_list in self.similar:
                 if prediction in sim_list or f'{prediction}_{script}' in sim_list:
                     current_similar = sim_list
+            logging.debug(current_similar)
 
             spellchecked = {}
             for l in current_similar:

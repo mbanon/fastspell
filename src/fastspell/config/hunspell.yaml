@@ -18,6 +18,7 @@ hunspell_codes:
     da: da_DK
     de: de_DE
     en: en_GB
+    el: el_GR
     es: es_ES
     et: et_ET
     fa: fa_IR
@@ -75,3 +76,4 @@ hunspell_codes:
     ur: ur_PK
     uz: uz_UZ
     yi: yi
+    vi: vi_VN
