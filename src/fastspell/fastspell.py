@@ -11,6 +11,7 @@ import timeit
 import argparse
 import traceback
 import logging
+import iso639
 
 try:
     from . import __version__
@@ -21,7 +22,7 @@ except ImportError:
 
 fasttext.FastText.eprint = lambda x: None
 
-HBS_LANGS = ('hbs', 'sh', 'bs', 'sr', 'hr', 'me')
+HBS_LANGS = ('hbs', 'bos', 'srp', 'hrv', 'cnr')
 
 
 def initialization():
@@ -50,6 +51,19 @@ def initialization():
         logging.error("Please provide  --aggr or --cons")
         exit(1)
 
+    args.iso1 = False
+    if len(args.lang) == 2:
+        try:
+            new_code = iso639.Lang(args.lang).pt3
+        except iso639.exceptions.InvalidLanguageValue:
+            logging.error(f"Invalid ISO 639-1 language code: '{args.lang}'")
+            sys.exit(10)
+
+        logging.warning(f"ISO 639-1 '{args.lang}' code provided. Now working in ISO 639-1 mode.")
+
+        args.lang = new_code
+        args.iso1 = True
+
     if args.script and args.lang not in HBS_LANGS:
         logging.warning("Script detection is only supported with Serbo-Croatian")
 
@@ -59,18 +73,19 @@ class FastSpell:
 
     threshold = 0.5 #Hunspell max error rate allowed in a sentence
     prefix = "__label__" #FastText returns langs labeled as __label__LANGCODE
-    ft_model_hash = "01810bc59c6a3d2b79c79e6336612f65"
-    ft_download_url = "https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.bin"
+    ft_model_hash = "2b39ad3fd2cd4d3fb8d34e15eaaa297fbbc805bc"
+    ft_download_url = "https://dl.fbaipublicfiles.com/nllb/lid/lid218e.bin"
 
 
-    def __init__(self, lang, config_path=None,
-                 mode="cons", hbs=False, script=False):
+    def __init__(self, lang, config_path=None, mode="cons",
+                 hbs=False, script=False, iso1=False):
         assert (mode=="cons" or mode=="aggr"), "Unknown mode. Use 'aggr' for aggressive or 'cons' for conservative"
 
         self.lang = lang
         self.mode = mode
         self.hbs = hbs
         self.script = script
+        self.iso1 = iso1
 
         self.cur_path = os.path.dirname(__file__)
         self.download_fasttext()
@@ -82,7 +97,7 @@ class FastSpell:
 
     def download_fasttext(self):
         ''' Download and check integrity of FastText model '''
-        ft_model_path = os.path.join(self.cur_path, "lid.176.bin") #The model should be in the same directory
+        ft_model_path = os.path.join(self.cur_path, "lid218e.bin") #The model should be in the same directory
         hash = get_hash(ft_model_path)
         if hash == self.ft_model_hash:
             self.model = fasttext.load_model(ft_model_path)  #FastText model
@@ -152,16 +167,16 @@ class FastSpell:
                 'hbs_cyr': str.maketrans('', '',
                     'АаБбВвГгДддЂђЕеЖжЗзЗ́з́ИиКкkЛлЉљМмНнЊњОоПпРрСсС́с́ЋћТтУуФфХхЦцЧчШшЩщҵҥӕ'),
             },
-            "sr": {
-                'sr_cyr': str.maketrans('', '',
+            "srp": {
+                'srp_cyr': str.maketrans('', '',
                     'aAbBcčČćĆdDđĐeEfFgGhHiIjJkKlLmMnNoOpPrRsSšŠŚśtuUvVzZžŽŹźﬁﬂﬆĳœǌ'),
-                'sr_cyr': str.maketrans('', '',
+                'srp_cyr': str.maketrans('', '',
                     'АаБбВвГгДддЂђЕеЖжЗзЗ́з́ИиКкkЛлЉљМмНнЊњОоПпРрСсС́с́ЋћТтУуФфХхЦцЧчШшЩщҵҥӕ'),
             },
-            "me": {
-                'me_cyr': str.maketrans('', '',
+            "cnr": {
+                'cnr_cyr': str.maketrans('', '',
                     'aAbBcčČćĆdDđĐeEfFgGhHiIjJkKlLmMnNoOpPrRsSšŠŚśtuUvVzZžŽŹźﬁﬂﬆĳœǌ'),
-                'me_cyr': str.maketrans('', '',
+                'cnr_cyr': str.maketrans('', '',
                     'АаБбВвГгДддЂђЕеЖжЗзЗ́з́ИиКкkЛлЉљМмНнЊњОоПпРрСсС́с́ЋћТтУуФфХхЦцЧчШшЩщҵҥӕ'),
             }
         }
@@ -181,10 +196,33 @@ class FastSpell:
 
         return best_script
 
-
     def getlang(self, sent):
-        sent=sent.replace("\n", " ").strip()
-        prediction = self.model.predict(sent.lower(), k=1)[0][0][len(self.prefix):]
+        langcode = self._getlang(sent)
+
+        if self.iso1:
+            #TODO try catch here??
+            lang = iso639.Lang(langcode)
+
+            # Convert to 639-1 using the macrolanguage because there is no direct conversion
+            if langcode in ('arb', 'als', 'ydd'):
+                return lang.macro().pt1
+
+            if lang.pt1 == '':
+                #raise ValueError(f"Detected '{langcode} ({lang.name})' that does not have equivalent ISO 639-1 code")
+                logging.warning(f"Detected '{langcode} ({lang.name})' that does not have equivalent ISO 639-1 code")
+                return langcode
+
+
+            return lang.pt1
+
+        return langcode
+
+    def _getlang(self, sent):
+        sent = sent.replace("\n", " ").strip()
+        # run prediction and
+        # remove label prefix and script suffix
+        start, end = len(self.prefix), len(self.prefix) + 3
+        prediction = self.model.predict(sent.lower(), k=1)[0][0][start:end]
 
         # Return 'hbs' for all serbo-croatian variants
         # if hbs mode is enabled or hbs is the requested language
@@ -193,12 +231,8 @@ class FastSpell:
 
         # If prediction does not specify the with variant
         # replace it by any of the variants to trigger hunspell refinement
-        if prediction == "no" and self.lang != "no":
-            prediction = "nb"
-        if prediction == "sh":
-            prediction = "sr"
-        if prediction == "he" and self.lang == "iw": #trick for deprecated iw language code for hebrew
-            prediction = "iw"
+        if prediction == "nor" and self.lang != "nor":
+            prediction = "nob"
 
         # Always detect script if supported (will be printed only if requested)
         script = ''
@@ -298,7 +332,7 @@ def perform_identification(args):
         mode="cons"
 
     fs = FastSpell(args.lang, mode=mode, config_path=args.config_path,
-                   hbs=args.hbs, script=args.script)
+                   hbs=args.hbs, script=args.script, iso1=args.iso1)
 
     for line in args.input:
         lident = fs.getlang(line)

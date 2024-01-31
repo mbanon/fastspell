@@ -43,7 +43,7 @@ def remove_unwanted_words(tokens, lang):
     isfirsttoken=True
     for token in tokens:
         token=PUNCT_REGEX.sub("", token.strip()).strip()  #Regex to remove punctuation
-        if lang=="de":
+        if lang=="deu":
             if any(c.isalpha() for c in token): #token.upper() != token.lower():
                 newtokens.append(token)
         else:
@@ -54,13 +54,12 @@ def remove_unwanted_words(tokens, lang):
     return newtokens
 
 def get_hash(filepath):
-    hash = None
+    sha1hash = None
     try:
         with open(filepath, 'rb') as model_file:
             file_content = model_file.read()
-            md5Hash = hashlib.md5(file_content)
-            hash = md5Hash.hexdigest()
-        return hash    
+            sha1hash = hashlib.sha1(file_content).hexdigest()
+        return sha1hash
     except FileNotFoundError:
         return None
 

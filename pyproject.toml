@@ -9,6 +9,7 @@ dependencies = [
     "cyhunspell>=2.0.2, <=2.0.3",
     "fastspell-dictionaries==3.2",
     "fasttext-wheel==0.9.2",
+    "iso639-lang==2.2",
     "urllib3",
     "PyYAML",
     "regex",
