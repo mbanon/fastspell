@@ -223,6 +223,8 @@ class FastSpell:
         # remove label prefix and script suffix
         start, end = len(self.prefix), len(self.prefix) + 3
         prediction = self.model.predict(sent.lower(), k=1)[0][0][start:end]
+        logging.debug(f"Sentence to predict: '{sent.lower()}'")
+        logging.debug(f"Predict fasttext: {prediction}")
 
         # Return 'hbs' for all serbo-croatian variants
         # if hbs mode is enabled or hbs is the requested language
@@ -315,6 +317,8 @@ class FastSpell:
                     refined_prediction = prediction
                 else:
                     refined_prediction = "unk"
+
+        logging.debug(f"Prediction: {prediction} refined: {refined_prediction}")
 
         # If script detection not requested
         # remove it from prediction
