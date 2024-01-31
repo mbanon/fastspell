@@ -51,19 +51,6 @@ def initialization():
         logging.error("Please provide  --aggr or --cons")
         exit(1)
 
-    args.iso1 = False
-    if len(args.lang) == 2:
-        try:
-            new_code = iso639.Lang(args.lang).pt3
-        except iso639.exceptions.InvalidLanguageValue:
-            logging.error(f"Invalid ISO 639-1 language code: '{args.lang}'")
-            sys.exit(10)
-
-        logging.warning(f"ISO 639-1 '{args.lang}' code provided. Now working in ISO 639-1 mode.")
-
-        args.lang = new_code
-        args.iso1 = True
-
     if args.script and args.lang not in HBS_LANGS:
         logging.warning("Script detection is only supported with Serbo-Croatian")
 
@@ -85,7 +72,20 @@ class FastSpell:
         self.mode = mode
         self.hbs = hbs
         self.script = script
-        self.iso1 = iso1
+
+        self.iso1 = False
+        if len(self.lang) == 2:
+            try:
+                new_code = iso639.Lang(self.lang).pt3
+            except iso639.exceptions.InvalidLanguageValue:
+                logging.error(f"Invalid ISO 639-1 language code: '{self.lang}'")
+                sys.exit(10)
+
+            logging.warning(f"ISO 639-1 '{self.lang}' code provided. Now working in ISO 639-1 mode.")
+
+            self.lang = new_code
+            self.iso1 = True
+
 
         self.cur_path = os.path.dirname(__file__)
         self.download_fasttext()
@@ -332,7 +332,7 @@ def perform_identification(args):
         mode="cons"
 
     fs = FastSpell(args.lang, mode=mode, config_path=args.config_path,
-                   hbs=args.hbs, script=args.script, iso1=args.iso1)
+                   hbs=args.hbs, script=args.script)
 
     for line in args.input:
         lident = fs.getlang(line)
