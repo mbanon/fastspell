@@ -151,7 +151,8 @@ The **Aggressive** mode is less hesitant to tag a sentence with the target langu
 
 ## Benchmark 
 
-![comparative.png](comparative.png)
+Benchmark data: https://github.com/mbanon/benchmarks
+Results:  https://docs.google.com/spreadsheets/d/158ZRWMgRH5TptlFWpKyh5uRL5jTkKW1d4KGJg1AZf7A/edit?usp=sharing 
 
 
 ## Usage example
