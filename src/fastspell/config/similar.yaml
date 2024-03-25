@@ -4,6 +4,7 @@ similar:
     az: [tr]
     be: [ru, uk]    
     bg: [mk, ru]
+    br: [fr]
     bs: [hr, sr_lat, sl] #should add me (not adding because dict is the same as sr)
     ca: [es, oc]
     cs: [sk]

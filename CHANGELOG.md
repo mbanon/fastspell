@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## FastSpell 0.12
+- Added support for Breton (br)
+
 ## FastSpell 0.11
 - Added support for Serbian cyrillic and latin dictionaries.
 - Changes in Slovak and Slovene similar languages.
