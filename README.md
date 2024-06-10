@@ -10,6 +10,38 @@ FastSpell will try to determine the language of a sentence by using **[FastText]
 
 If the language detected is very similar to the target language (i.e. FastText detected Spanish, while the targetted language is Galician), extra checks are performed with **[Hunspell](http://hunspell.github.io/)** to determine the language more precisely.
 
+## Citation
+
+If you find **FastSpell** useful, please consider citing the following paper:
+
+> Marta Bañón, Gema Ramírez-Sánchez, Jaume Zaragoza-Bernabeu, and Sergio Ortiz Rojas, \
+> "[FastSpell: The LangId Magic Spell](https://aclanthology.org/2024.lrec-main.626/)", \
+> in **Proceedings of the 2024 Joint International Conference on Computational Linguistics, Language Resources and Evaluation (LREC-COLING 2024)**,\
+> pages 7133–7140, Torino, Italia. ELRA and ICCL.
+
+```
+@inproceedings{banon-etal-2024-fastspell-langid,
+    title = "{F}ast{S}pell: The {L}ang{I}d Magic Spell",
+    author = "Ba{\~n}{\'o}n, Marta  and
+      Ram{\'\i}rez-S{\'a}nchez, Gema  and
+      Zaragoza-Bernabeu, Jaume  and
+      Ortiz Rojas, Sergio",
+    editor = "Calzolari, Nicoletta  and
+      Kan, Min-Yen  and
+      Hoste, Veronique  and
+      Lenci, Alessandro  and
+      Sakti, Sakriani  and
+      Xue, Nianwen",
+    booktitle = "Proceedings of the 2024 Joint International Conference on Computational Linguistics, Language Resources and Evaluation (LREC-COLING 2024)",
+    month = may,
+    year = "2024",
+    address = "Torino, Italia",
+    publisher = "ELRA and ICCL",
+    url = "https://aclanthology.org/2024.lrec-main.626",
+    pages = "7133--7140",
+    abstract = "Language identification is a crucial component in the automated production of language resources, particularly in multilingual and big data contexts. However, commonly used language identifiers struggle to differentiate between similar or closely-related languages. This paper introduces FastSpell, a language identifier that combines fastText (a pre-trained language identifier tool) and Hunspell (a spell checker) with the aim of having a refined second-opinion before deciding which language should be assigned to a text. We provide a description of the FastSpell algorithm along with an explanation on how to use and configure it. To that end, we motivate the need of such a tool and present a benchmark including some popular language identifiers evaluated during the development of FastSpell. We show how FastSpell is useful not only to improve identification of similar languages, but also to identify new ones ignored by other tools.",
+}
+```
 
 ## Requirements & Installation
 
