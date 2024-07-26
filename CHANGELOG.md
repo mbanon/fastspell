@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## FastSpell 0.11.1
+- Restrict numpy version to <2
+
+
 ## FastSpell 0.11
 - Added support for Serbian cyrillic and latin dictionaries.
 - Changes in Slovak and Slovene similar languages.
