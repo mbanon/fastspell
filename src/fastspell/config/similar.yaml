@@ -1,6 +1,7 @@
 #Target langs (keys) dict for mistakeable languages (values)
 similar:
     af: [nl, de]
+    am: [ti]
     az: [tr]
     be: [ru, uk]    
     bg: [mk, ru]
@@ -43,6 +44,7 @@ similar:
     sr_cyr: [mk, bg, ru] #should add me (not adding because dict is the same as sr)
     sr_lat: [bs, hr, sl]
     sv: [da, nb]
+    ti: [am]
     tt: [kk, ky, ru] #maybe add BA
     uk: [be, ru, mk, bg]
     ur: [fa, ar]

@@ -5,6 +5,7 @@ dictpath: ""
 #This is how hunspell files (.dic and .aff) are named in dictpath
 hunspell_codes:
     af: af_ZA
+    am: am_ET
     an: an_ES
     ar: ar
     az: az_AZ
@@ -68,6 +69,7 @@ hunspell_codes:
     te: te_IN
     tg: tg_TG
     th: th_TH
+    ti: ti_ER
     tk: tk
     tr: tr
     tt: tt_RU
