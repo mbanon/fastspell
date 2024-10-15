@@ -44,6 +44,7 @@ similar:
     sr_cyr: [mk, bg, ru] #should add me (not adding because dict is the same as sr)
     sr_lat: [bs, hr, sl]
     sv: [da, nb]
+    tg: [bg, ru]
     ti: [am]
     tt: [kk, ky, ru] #maybe add BA
     uk: [be, ru, mk, bg]
