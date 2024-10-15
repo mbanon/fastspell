@@ -6,8 +6,9 @@ dictpath: ""
 hunspell_codes:
     af: af_ZA
     am: am_ET
-    an: an_ES
+    an: an_ES    
     ar: ar
+    ast: ast_ES
     az: az_AZ
     be: be_BY
     bg: bg_BG

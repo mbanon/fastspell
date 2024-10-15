@@ -1,7 +1,7 @@
 # CHANGELOG
 
 ## FastSpell 0.12
-- Added more languages: am, tg, ti
+- Added more languages: am, ast, fo, tg, ti
 
 ## FastSpell 0.11.1
 - Restrict numpy version to <2

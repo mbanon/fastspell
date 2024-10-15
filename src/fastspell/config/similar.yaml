@@ -2,6 +2,7 @@
 similar:
     af: [nl, de]
     am: [ti]
+    ast: [es]
     az: [tr]
     be: [ru, uk]    
     bg: [mk, ru]
@@ -10,7 +11,7 @@ similar:
     cs: [sk]
     cy: [ga, en]
     da: [nb, sv]
-    es: [gl, ca]
+    es: [gl, ca, ast]
     fa: [ar, az]
     fo: [is, nb, da]
     ga: [cy, en]
