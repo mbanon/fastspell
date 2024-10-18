@@ -22,6 +22,7 @@ similar:
     hbs_cyr: [ru, mk, bg]
     hi: [mr, ne] #add SD
     hr: [bs, sr_lat, sl] #should add me (not adding because dict is the same as sr)
+    ht: [tl]
     id: [ms]
     is: [da, nb, nn, sv]
     iw: [yi]

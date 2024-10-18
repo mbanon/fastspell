@@ -35,6 +35,7 @@ hunspell_codes:
     he: he_IL
     hi: hi_IN
     hr: hr_HR
+    ht: ht_HT
     hu: hu_HU
     id: id_ID
     is: is_IS
@@ -75,6 +76,7 @@ hunspell_codes:
     th: th_TH
     ti: ti_ER
     tk: tk
+    tl: tl_PH
     tr: tr
     tt: tt_RU
     uk: uk_UA
