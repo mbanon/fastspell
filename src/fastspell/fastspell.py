@@ -11,6 +11,7 @@ import timeit
 import argparse
 import traceback
 import logging
+import hanzidentifier
 
 try:
     from . import __version__
@@ -200,6 +201,7 @@ class FastSpell:
         if prediction == "he" and self.lang == "iw": #trick for deprecated iw language code for hebrew
             prediction = "iw"
 
+
         # Always detect script if supported (will be printed only if requested)
         script = ''
         if prediction in self.script_tables:
@@ -284,6 +286,31 @@ class FastSpell:
 
         # If script detection not requested
         # remove it from prediction
+        
+        #Special case for Simplified vs Traditional Chinese
+        
+        if refined_prediction == "zh":
+            if self.lang.lower()  in [ "zh-hans", "zh_hans" ]:
+                self.script = True
+                if hanzidentifier.is_simplified(sent.strip()):
+                    refined_prediction = "zh_Hans"
+                elif hanzidentifier.is_traditional(sent.strip()):
+                    refined_prediction = "zh_Hant"
+                else:
+                    refined_prediction = "zh"                                
+                    
+            elif self.lang.lower() in [ "zh-hant", "zh_hant" ]:
+                self.script = True
+                if hanzidentifier.is_traditional(sent.strip()):
+                    refined_prediction = "zh_Hant"
+                elif hanzidentifier.is_simplified(sent.strip()):
+                    refined_prediction = "zh_Hans"
+                else:
+                    refined_prediction = "zh"
+                
+            else:
+                refined_prediction =  "zh"
+                
         if self.script:
             return refined_prediction
         else:
