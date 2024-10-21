@@ -13,6 +13,7 @@ dependencies = [
     "urllib3",
     "PyYAML",
     "regex",
+    "hanzidentifier"
 ]
 classifiers = [
     "Environment :: Console",
