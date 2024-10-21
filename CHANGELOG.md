@@ -1,7 +1,7 @@
 # CHANGELOG
 
 ## FastSpell 0.12
-- Added more languages: am, ast, awa, fo, lb, sa, tg, ti
+- Added more languages: am, ast, awa, bho, fo, ht, lb, sa, tg, ti, tl, zsm, zh-hans, zh-hant
 
 ## FastSpell 0.11.1
 - Restrict numpy version to <2
