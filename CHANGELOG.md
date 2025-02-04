@@ -1,8 +1,5 @@
 # CHANGELOG
 
-## Fastspell 0.13
-- Move from cyhunspell to chunspell (see #24)
-
 ## FastSpell 0.12
 - Added more languages: am, ast, awa, bho, fo, ht, lb, sa, tg, ti, tl, zsm, zh-hans, zh-hant
 
