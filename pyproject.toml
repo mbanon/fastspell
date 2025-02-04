@@ -1,12 +1,12 @@
 [project]
 name = "fastspell"
-version = "0.12"
+version = "0.13"
 license = {file = "LICENSE"}
 readme = "README.md"
 description = "Targetted language identifier, based on FastText and Hunspell."
 requires-python = ">=3.8"
 dependencies = [
-    "cyhunspell>=2.0.2, <=2.0.3",
+    "chunspell==2.0.4",
     "fastspell-dictionaries==3.3",
     "fasttext-wheel==0.9.2",
     "numpy<2",
