@@ -42,6 +42,7 @@ similar:
     nl: [af]
     nn: [nb, da, sv]
     "no": [da, sv, nn] #same as NB, since dict is the same
+    oc: [ca, es]
     #ps: [ar, fa]
     pt: [es, gl]
     ru: [uk, bg]
