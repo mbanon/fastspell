@@ -40,6 +40,7 @@ hunspell_codes:
     hu: hu_HU
     id: id_ID
     is: is_IS
+    it: it_IT
     iw: he_IL
     kk: kk_KZ
     kn: kn_IN
@@ -64,7 +65,9 @@ hunspell_codes:
     oc: oc
     pl: pl
     pt: pt_PT
+    ro: ro_RO
     ru: ru_RU
+    sc: sc_IT
     sk: sk_SK
     sl: sl_SI
     so: so_SO
