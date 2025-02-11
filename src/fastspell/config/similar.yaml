@@ -30,7 +30,8 @@ similar:
     kk: [ky, tt, ru]
     ky: [ru, kk, tt, mn]
     lb: [de]
-    lv: [lt]
+    ltg: [lt, lv]
+    lv: [lt, ltg]
     mai: [hi]
     me_lat: [hr, sl]
     me_cyr: [bg, mk, ru] #
