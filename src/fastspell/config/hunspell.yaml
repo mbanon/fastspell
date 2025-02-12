@@ -50,6 +50,7 @@ hunspell_codes:
     lt: lt
     ltg: ltg
     lv: lv_LV
+    mag: mag
     mai: mai_IN
     me_lat: sr_ME_lat
     me_cyr: sr_ME_cyr
@@ -67,6 +68,7 @@ hunspell_codes:
     pap: pap_AW
     pl: pl
     pt: pt_PT
+    qu: qu_EC
     ro: ro_RO
     ru: ru_RU
     sc: sc_IT

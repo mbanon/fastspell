@@ -32,6 +32,7 @@ similar:
     lb: [de]
     ltg: [lt, lv]
     lv: [lt, ltg]
+    mag: [hi]
     mai: [hi]
     me_lat: [hr, sl]
     me_cyr: [bg, mk, ru] #
@@ -48,6 +49,7 @@ similar:
     pap: [es, it]
     #ps: [ar, fa]
     pt: [es, gl]
+    #qu: [es]
     ru: [uk, bg]
     sc: [es, ca, it, ro]
     sk: [cs, pl]
