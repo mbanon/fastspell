@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## FastSpell 0.13
+- Added more languages: fur, gn, ltg, mag, mai, oc, pap, qu, sc, szl, tk and vec
+
 ## FastSpell 0.12
 - Added more languages: am, ast, awa, bho, fo, ht, lb, sa, tg, ti, tl, zsm, zh-hans, zh-hant
 
