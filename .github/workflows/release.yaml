@@ -22,8 +22,8 @@ jobs:
 
       - name: Run tests
         run: |-
-          sudo apt-get -y install autopoint 
-          pip install .
+          sudo apt-get -y install autopoint python3-dev build-essential autoconf  libtool
+          pip install . git+https://github.com/MSeal/cython_hunspell@2.0.3 
           python -m unittest discover -s tests
 
   build_sdist:
