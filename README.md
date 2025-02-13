@@ -59,6 +59,12 @@ Note that it requires Python3.8 or higher, and the `python3-dev` package:
 sudo apt-get install python3-dev
 ```
 
+In order to ensure you get the latest version of FastSpell, you can run:
+
+```
+pip install fastspell==0.13 git+https://github.com/MSeal/cython_hunspell@2.0.3  
+```
+
 **IMPORTANT**:
 In some cases (for example, when using Python 3.10), the `cyhunspell` version 2.0.2 installation will fail. If that's the case, you need to install `cyhunspell==2.0.3` before installing `fastspell`:
 
